@@ -5,13 +5,25 @@ class LobbyJoinCreatePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            welcome: '',
-            prompt: '',
+            name: '',
+            prompt: ''
         }
     }
 
-    welcomeUser=()=>{
-        this.setState({welcome: "Welcome "})
+    componentDidMount(){
+        if(typeof this.props.tempuser === 'string'){
+            this.setState({name: this.props.tempuser})
+        }
+        else{
+            this.props.history.push("/")
+        }
+    }
+
+    checkName=()=>{
+        this.props.history.push("/")
+        if(this.props.tempuser === ''){
+            this.props.history.push("/")
+        }
     }
 
     joinLobby=()=>{
@@ -28,12 +40,8 @@ class LobbyJoinCreatePage extends Component {
         return (
             <div>
             {/* <p>{ this.props.tempuser || "" }</p> */}
-            {console.log(this.props.tempuser)}
-            <h1>Welcome {this.props.tempuser}</h1>
-            <div>
-                {this.state.welcome}
-            </div>
 
+            {<h1>Welcome {this.state.name}</h1>}
             <p>Join a lobby (Enter Code):</p>
             <input />
             <button onClick={this.joinLobby}>Join Lobby</button>
