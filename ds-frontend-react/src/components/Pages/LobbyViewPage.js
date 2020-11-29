@@ -3,6 +3,7 @@ import {Link, withRouter} from 'react-router-dom';
 
 class Lobby extends Component {
     render() {
+        console.log(this.props.location.search)
         return (
             <div>
             <p><Link to ="/racing">START GAME</Link></p>

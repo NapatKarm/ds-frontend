@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import {userCreationThunk} from "../../store/utilities/tempuser";
+import { lobbyJoinThunk, lobbyUpdateThunk, lobbyCreateThunk } from "../../store/utilities/lobbyinfo"
 
 //Page Imports
 import UserCreation from '../Pages/UserCreationPage';
@@ -14,8 +15,8 @@ class RoutesView extends Component {
     render () {
         const {userCreated}=this.props
         const UserCreationComponent = () => (<UserCreation userCreation={ this.props.userCreation }/>)
-        const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser }/>)
-        const LobbyComponent = () => (<LobbyPage/>)
+        const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser } lobbyJoin={this.props.lobbyJoin} lobbyCreate={this.props.lobbyCreate}/>)
+        const LobbyComponent = () => (<LobbyPage lobbyInfo={this.props.lobbyInfo} lobbyUpdate={this.props.lobbyUpdate}/>)
         const RaceComponent = () => (<RacePage/>)
         return (
         <Router>
@@ -24,8 +25,8 @@ class RoutesView extends Component {
                 {   userCreated && (
                         <Switch>
                             <Route exact path="/creation" render={LobbyJoinCreateCompenent} />
-                            <Route exact path="/lobby" render={LobbyComponent} />
-                            <Route exact path="/racing" render={RaceComponent} />
+                            <Route exact path="/lobby/:lobbyid" render={LobbyComponent} />
+                            <Route exact path="/lobby/:lobbyid/racing" render={RaceComponent} />
                         </Switch>
                     )
                 }   
@@ -39,13 +40,17 @@ class RoutesView extends Component {
 const mapState = (state) => {
     return {
         tempuser: state.tempuser,
-        userCreated: !!state.tempuser
+        userCreated: !!state.tempuser,
+        lobbyInfo: state.lobbyinfo
     }
 }
 
 const mapDispatch = (dispatch) => {
     return {
-        userCreation: (userinfo) => dispatch(userCreationThunk(userinfo))
+        userCreation: (userinfo) => dispatch(userCreationThunk(userinfo)),
+        lobbyJoin: (tempuser, lobbyID) => dispatch(lobbyJoinThunk(tempuser, lobbyID)),
+        lobbyUpdate: (tempuser, lobbyID) => dispatch(lobbyUpdateThunk(tempuser,lobbyID)),
+        lobbyCreate: (tempuser) => dispatch(lobbyCreateThunk(tempuser))
     }
 }
 
