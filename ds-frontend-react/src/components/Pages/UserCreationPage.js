@@ -6,7 +6,7 @@ class UserCreation extends Component {
         super(props);
         this.state = {
           username: '',
-          alert: ""
+          alert: ''
         }
     }
 
@@ -20,19 +20,21 @@ class UserCreation extends Component {
         }
         else{
             this.props.userCreation(this.state.username)
-            this.props.history.push("/");
+            this.props.history.push("/creation");
         }
     }
 
     render() {
         return (
             <div>
+                <h1>Welcome to &lt;INSERT TITLE HERE&gt;</h1>
+                <br></br>
+                <h3>Enter a username: </h3>
                 <input onChange={this.changeUsername}/>
                 <button onClick={this.usernameCheck}>Enter</button>
                 <div>
                     {this.state.alert}
                 </div>
-                <p><Link to ="/">To Home</Link></p>
             </div>
         )
     }
