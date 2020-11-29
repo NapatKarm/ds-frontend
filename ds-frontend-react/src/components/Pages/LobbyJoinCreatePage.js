@@ -27,11 +27,13 @@ class LobbyJoinCreatePage extends Component {
     }
 
     joinLobby=()=>{
-        this.props.history.push("/lobby")
+        // this.props.history.push("/lobby")
+        console.log("Implementation Underway")
     }
 
-    createLobby=()=>{
-        this.setState({prompt: "PLACEHOLDER: Lobby Created"})
+    createLobby= async ()=>{
+        await this.props.lobbyCreate(this.props.tempuser);
+        this.props.history.push(`/lobby/${this.props.lobbyInfo.lobbyName}`)
     }
 
     render() {
