@@ -6,7 +6,8 @@ class Lobby extends Component {
         return (
             <div>
             <p><Link to ="/racing">START GAME</Link></p>
-            <p><Link to ="/">Back Home</Link></p>
+            <p><Link to ="/creation">Back to Lobby Join/Create</Link></p>
+            <p><Link to ="/">Back User Creation</Link></p>
             </div>
         )
     }

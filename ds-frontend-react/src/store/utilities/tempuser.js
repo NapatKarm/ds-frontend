@@ -22,7 +22,7 @@ const error = (err) => {
 export const userCreationThunk = (userinfo) => async (dispatch) => {
     let res;
     try {
-        res = userinfo+"TEMPORARY";
+        res = userinfo+" (TEMPORARY)";
         console.log(userinfo,res,"Userinfo changed");
         dispatch(userCreation(res));
     }

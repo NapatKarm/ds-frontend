@@ -5,7 +5,7 @@ import {userCreationThunk} from "../../store/utilities/tempuser";
 
 //Page Imports
 import UserCreation from '../Pages/UserCreationPage';
-import HomePage from '../Pages/HomePage';
+import LobbyJoinCreatePage from '../Pages/LobbyJoinCreatePage';
 import LobbyPage from '../Pages/LobbyViewPage';
 import RacePage from '../Pages/RacePage';
 
@@ -14,16 +14,16 @@ class RoutesView extends Component {
     render () {
         const {userCreated}=this.props
         const UserCreationComponent = () => (<UserCreation userCreation={ this.props.userCreation }/>)
-        const HomeComponent = () => (<HomePage tempuser={ this.props.tempuser }/>)
+        const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser }/>)
         const LobbyComponent = () => (<LobbyPage/>)
         const RaceComponent = () => (<RacePage/>)
         return (
         <Router>
             <Switch>
-                <Route exact path="/creation" render={UserCreationComponent} />
+                <Route exact path="/" render={UserCreationComponent} />
                 {   userCreated && (
                         <Switch>
-                            <Route exact path="/" render={HomeComponent} />
+                            <Route exact path="/creation" render={LobbyJoinCreateCompenent} />
                             <Route exact path="/lobby" render={LobbyComponent} />
                             <Route exact path="/racing" render={RaceComponent} />
                         </Switch>
