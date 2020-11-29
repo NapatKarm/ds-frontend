@@ -15,7 +15,7 @@ class RoutesView extends Component {
     render () {
         const {userCreated}=this.props
         const UserCreationComponent = () => (<UserCreation userCreation={ this.props.userCreation }/>)
-        const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser } lobbyJoin={this.props.lobbyJoin} lobbyCreate={this.props.lobbyCreate}/>)
+        const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser } lobbyJoin={this.props.lobbyJoin} lobbyCreate={this.props.lobbyCreate} lobbyInfo={this.props.lobbyInfo}/>)
         const LobbyComponent = () => (<LobbyPage lobbyInfo={this.props.lobbyInfo} lobbyUpdate={this.props.lobbyUpdate}/>)
         const RaceComponent = () => (<RacePage/>)
         return (

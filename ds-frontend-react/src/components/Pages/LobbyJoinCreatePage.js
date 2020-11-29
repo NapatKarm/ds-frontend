@@ -19,8 +19,9 @@ class LobbyJoinCreatePage extends Component {
         console.log("Implementation Underway")
     }
 
-    createLobby=()=>{
-        this.props.lobbyCreate(this.props.tempuser);
+    createLobby= async ()=>{
+        await this.props.lobbyCreate(this.props.tempuser);
+        this.props.history.push(`/lobby/${this.props.lobbyInfo.lobbyName}`)
     }
 
     render() {
