@@ -12,17 +12,24 @@ import RacePage from '../Pages/RacePage';
 
 class RoutesView extends Component {
     render () {
-        const UserCreationComponent = () => (<UserCreation/>)
-        const HomeComponent = () => (<HomePage/>)
+        const {userCreated}=this.props
+        const UserCreationComponent = () => (<UserCreation userCreation={ this.props.userCreation }/>)
+        const HomeComponent = () => (<HomePage tempuser={ this.props.tempuser }/>)
         const LobbyComponent = () => (<LobbyPage/>)
         const RaceComponent = () => (<RacePage/>)
         return (
         <Router>
             <Switch>
-                <Route exact path="/" render={HomeComponent} />
                 <Route exact path="/creation" render={UserCreationComponent} />
-                <Route exact path="/lobby" render={LobbyComponent} />
-                <Route exact path="/racing" render={RaceComponent} />
+                {   userCreated && (
+                        <Switch>
+                            <Route exact path="/" render={HomeComponent} />
+                            <Route exact path="/lobby" render={LobbyComponent} />
+                            <Route exact path="/racing" render={RaceComponent} />
+                        </Switch>
+                    )
+                }   
+                <Route render={UserCreationComponent} />
             </Switch>
         </Router>
         )
@@ -31,7 +38,8 @@ class RoutesView extends Component {
 
 const mapState = (state) => {
     return {
-        tempuser: state.tempuser
+        tempuser: state.tempuser,
+        userCreated: !!state.tempuser
     }
 }
 

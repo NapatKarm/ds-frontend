@@ -23,12 +23,12 @@ export const userCreationThunk = (userinfo) => async (dispatch) => {
     let res;
     try {
         res = userinfo+"TEMPORARY";
+        console.log(userinfo,res,"Userinfo changed");
+        dispatch(userCreation(res));
     }
     catch (fetchError) {
-        return dispatch(error(fetchError));
+        dispatch(error(fetchError));
     }
-    console.log(userinfo,res,"Userinfo changed");
-    dispatch(userCreation(res));
 }
 
 // Reducer Function
