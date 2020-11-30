@@ -5,7 +5,7 @@ import {userCreationThunk} from "../../store/utilities/tempuser";
 import { lobbyJoinThunk, lobbyUpdateThunk, lobbyCreateThunk } from "../../store/utilities/lobbyinfo"
 
 //Page Imports
-import UserCreation from '../Pages/UserCreationPage';
+import UserCreation from '../Pages/UserCreation/UserCreationPage';
 import LobbyJoinCreatePage from '../Pages/LobbyJoinCreatePage';
 import LobbyPage from '../Pages/LobbyView/LobbyViewPage';
 import RacePage from '../Pages/RacePage';

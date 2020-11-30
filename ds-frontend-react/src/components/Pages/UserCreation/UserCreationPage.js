@@ -1,0 +1,80 @@
+import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import TextField from '@material-ui/core/TextField';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import PlayCircleOutlineOutlinedIcon from '@material-ui/icons/PlayCircleOutlineOutlined';
+import "./UserCreationPage.css";
+const customTheme = createMuiTheme({
+    palette: {
+      primary: {
+        main: '#08f3ff',
+        contrastText: '#fff',
+      },
+      text: '#fff'
+    },
+  });
+  const errorTheme = createMuiTheme({
+    palette: {
+      primary: {
+        main: '#f44336',
+        contrastText: '#fff',
+      },
+      text: '#fff'
+    },
+  });
+class UserCreation extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: '',
+            alert: ''
+        }
+    }
+
+    changeUsername = (event) => {
+        this.setState({ username: event.target.value })
+    }
+
+    usernameCheck = () => {
+        if (this.state.username === "") {
+            this.setState({ alert: "Username cannot be empty." })
+        }
+        else {
+            this.props.userCreation(this.state.username)
+            this.props.history.push("/creation");
+        }
+    }
+
+    render() {
+        return (
+            <div>
+            <div className={`usernameTable${this.state.alert ? "Error" : ""}`}>
+                <div>
+                    <h1 style={{paddingTop:"20%"}}>Welcome to </h1>
+                    <h1>PLACEHOLDER</h1>
+                </div>
+                <div style={{ justifyContent: "center", alignItems: "flex-start", display: "flex" }}>
+                    {!this.state.alert ?
+                    (
+                        <ThemeProvider theme={customTheme}>
+                        <TextField variant="filled" id="usernameinput" label="Enter a Username" color="primary" onChange={this.changeUsername}/>
+                        </ThemeProvider>
+                    )
+                    :
+                    (
+                        <ThemeProvider theme={errorTheme}>
+                        <TextField error variant="filled" id="usernameinputerror" label="Enter a Username" color="primary" defaultValue={this.state.username} helperText={this.state.alert} onChange={this.changeUsername}/>
+                        </ThemeProvider>
+                    )
+                    }
+                    <ThemeProvider>
+                    <PlayCircleOutlineOutlinedIcon className={`goButton${this.state.alert ? "Error" : ""}`}style={{paddingLeft:"2%",paddingTop:"2%"}}fontSize="large" onClick={this.usernameCheck}/>
+                    </ThemeProvider>
+                </div>
+                </div>
+            </div>
+        )
+    }
+}
+
+export default withRouter(UserCreation)

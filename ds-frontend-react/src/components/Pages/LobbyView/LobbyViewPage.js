@@ -57,10 +57,10 @@ class Lobby extends Component {
                         </ThemeProvider>
                     </div>
                 </div>
-                <Grid container spacing={3} alignItems="stretch" style={{ backgroundColor: "lightblue", borderRadius: ".25rem", marginTop: "20px" }}>
+                <Grid container spacing={3} alignItems="stretch" style={{ backgroundColor: "#333", borderRadius: ".25rem", marginTop: "20px" }}>
                     <Grid item xs={12} >
                         <Paper style={{ textAlign: "center", padding: "10px", margin: "auto" }}>
-                            <div style={{ justifyContent: "left" }}>Welcome to {this.state.lobbyName} Lobby</div>
+                            <div style={{ justifyContent: "left" }}>LobbyID: {this.state.lobbyName}</div>
                             <div></div>
                         </Paper>
                     </Grid>
