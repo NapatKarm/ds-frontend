@@ -52,7 +52,7 @@ class LobbyJoinCreatePage extends Component {
                 {this.state.prompt}
             </div>
 
-            <p><Link to ="/lobby">To THIS LOBBY</Link></p>
+            <p><Link to ="/lobby/:lobbyid">To THIS LOBBY</Link></p>
             <p><Link to ="/">To User Creation!</Link></p>
             </div>
         )

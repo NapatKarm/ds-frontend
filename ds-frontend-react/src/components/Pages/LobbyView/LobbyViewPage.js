@@ -66,7 +66,7 @@ class Lobby extends Component {
                     </Grid>
                     <Grid item xs={6}>
                         <Paper>
-                            <p><Link to="/racing">START GAME</Link></p>
+                            <p><Link to="/lobby/:lobbyid/racing">START GAME</Link></p>
                         </Paper>
                     </Grid>
                     <Grid item xs={6}>
