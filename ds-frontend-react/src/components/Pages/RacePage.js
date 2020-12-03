@@ -24,7 +24,6 @@ class Racing extends Component {
 
     componentDidMount(){
         this.generateText()
-        this.setCharLength()
         document.addEventListener("keyup", this._handleKey)
     }
 
