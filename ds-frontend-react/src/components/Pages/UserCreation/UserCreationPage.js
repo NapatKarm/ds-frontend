@@ -3,7 +3,11 @@ import { Link, withRouter } from 'react-router-dom';
 import TextField from '@material-ui/core/TextField';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import PlayCircleOutlineOutlinedIcon from '@material-ui/icons/PlayCircleOutlineOutlined';
+import reCodeLogo from '../../../images/ReCodeGPC.png'
 import "./UserCreationPage.css";
+
+
+
 const customTheme = createMuiTheme({
     palette: {
       primary: {
@@ -47,11 +51,11 @@ class UserCreation extends Component {
 
     render() {
         return (
-            <div>
+            <div className="userPage">
             <div className={`usernameTable${this.state.alert ? "Error" : ""}`}>
                 <div>
-                    <h1 style={{paddingTop:"20%"}}>Welcome to </h1>
-                    <h1>PLACEHOLDER</h1>
+                    <h2 style={{paddingTop:"25%"}}>Welcome to </h2>
+                    <img className="logo"src={reCodeLogo} alt="Logo"/>
                 </div>
                 <div style={{ justifyContent: "center", alignItems: "flex-start", display: "flex" }}>
                     {!this.state.alert ?

@@ -1,3 +1,4 @@
+
 .usernameTable{
     color: white;
     font-family: "Roboto";
@@ -6,27 +7,25 @@
     width: 450px;
     border-radius: 500px;
     height: 450px;
-
     transition: 0.5s;
     text-align: center;
 }
 .usernameTable:hover{
-    box-shadow: 0px 5px 15px 0 #08f3ff;
+    box-shadow: 0px 10px 20px 0 #08f3ff;
 }
 .usernameTableError{
-    color: red;
     font-family: "Roboto";
     align-content: center;
     background-color: #121212;
     width: 450px;
     border-radius: 500px;
     height: 450px;
-
+    color: white;
     transition: 0.5s;
     text-align: center;
 }
 .usernameTableError:hover{
-    box-shadow: 0px 5px 15px 0 #ff0808;
+    box-shadow: 0px 10px 20px 0 #ff0808;
 }
 .goButton {
     color:white;
@@ -49,4 +48,11 @@
 .goButtonError:active {
     box-shadow: 0 0  #5f0000; 
     color: #b60404;
+}
+
+.logo {
+    margin-top: -4%;
+    height: 10%;
+    width: 80%;
+    margin-bottom: 4%;
 }
