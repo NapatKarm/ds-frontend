@@ -7,4 +7,8 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  background-image: url('./images/ReCodeBG1.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
