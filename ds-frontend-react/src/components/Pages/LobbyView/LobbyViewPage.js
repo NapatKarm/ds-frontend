@@ -34,9 +34,13 @@ class Lobby extends Component {
         }, () => {
             console.log("Jeez")
         })
+        this.props.socket.on('joinLobbyResponse',(res)=>{
+            this.setState({lobbyUsers: res.users})
+        })
     }
     leavingLobby = () => {
         console.log("SENDING LEAVING SIGNALS TO BACKEND");
+        this.props.socket.emit('leaveLobby',{leavingUser:this.props.tempuser})
         this.props.history.push("/creation")
     }
     render() {

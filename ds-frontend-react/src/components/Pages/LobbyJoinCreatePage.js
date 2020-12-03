@@ -25,14 +25,16 @@ class LobbyJoinCreatePage extends Component {
             this.props.history.push("/")
         }
     }
-
     joinLobby=()=>{
         // this.props.history.push("/lobby")
         console.log("Implementation Underway")
+        this.props.socket.emit('joinLobby',{lobbyCode:x})
     }
 
     createLobby= async ()=>{
         await this.props.lobbyCreate(this.props.tempuser);
+        this.props.socket.emit('createLobby')
+        await this.props.socket.on('joinLobby')
         this.props.history.push(`/lobby/${this.props.lobbyInfo.lobbyName}`)
     }
 
