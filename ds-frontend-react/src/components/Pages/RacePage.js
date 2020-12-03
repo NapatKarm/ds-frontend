@@ -2,13 +2,18 @@ import React, { Component } from 'react';
 import {Link, withRouter} from 'react-router-dom';
 
 import Textblock from '../../store/utilities/Textblock'
+import Speed from '../../store/utilities/speed'
 
 class Racing extends Component {
     constructor(props){
         super(props);
         this.state = {
             text: '',
-            userInput: ''
+            userInput: '',
+            characters: 0,
+            seconds: 0,
+            started: false,
+            finished: false
         }
     }
 
@@ -19,6 +24,7 @@ class Racing extends Component {
 
     componentDidMount(){
         this.generateText()
+        this.setCharLength()
         document.addEventListener("keyup", this._handleKey)
     }
 
@@ -31,7 +37,33 @@ class Racing extends Component {
     }
 
     onUserInputChange=(e)=>{
-        this.setState({userInput: e.target.value})
+        const inputText = e.target.value;
+        this.setTimer();
+        this.onFinish(inputText);
+        this.setState({userInput: inputText, characters: this.countCorrectCharacters(inputText)})
+    }
+
+    onFinish(userInput) {
+        if(userInput === this.state.text) {
+            clearInterval(this.interval);
+            this.setState({finished: true})
+        }
+    }
+
+    countCorrectCharacters(userInput){
+        const text = this.state.text.replace(' ', '');
+        return userInput.replace(' ', '').split('').filter((s, i) => s === text[i]).length;
+    }
+
+    setTimer(){
+        if(!this.state.started){
+            this.setState({started: true});
+            this.interval = setInterval(() => {
+                this.setState(prevProps => {
+                    return {seconds: prevProps.seconds + 1}
+                })
+            }, 1000)
+        }
     }
 
     render() {
@@ -44,10 +76,13 @@ class Racing extends Component {
                 <br></br>
 
                 <textarea
-                    value={this.state.userInput}
                     onChange={this.onUserInputChange}
+                    value={this.state.userInput}
+                   
                     placeholder="Type Here"
                 ></textarea>
+
+                <Speed seconds={this.state.seconds} characters={this.state.characters}/>
 
                 <p><Link to ="/">Back to User Creation</Link></p>
                 <p><Link to ="/lobby/:lobbyid">Back to Lobby</Link></p>
