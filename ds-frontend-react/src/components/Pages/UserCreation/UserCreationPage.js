@@ -57,13 +57,13 @@ class UserCreation extends Component {
                     {!this.state.alert ?
                     (
                         <ThemeProvider theme={customTheme}>
-                        <TextField variant="filled" id="usernameinput" label="Enter a Username" color="primary" onChange={this.changeUsername}/>
+                        <TextField variant="filled" id="usernameinput" label="Enter a Guest name" color="primary" onChange={this.changeUsername}/>
                         </ThemeProvider>
                     )
                     :
                     (
                         <ThemeProvider theme={errorTheme}>
-                        <TextField error variant="filled" id="usernameinputerror" label="Enter a Username" color="primary" defaultValue={this.state.username} helperText={this.state.alert} onChange={this.changeUsername}/>
+                        <TextField error variant="filled" id="usernameinputerror" label="Try again" color="primary" defaultValue={this.state.username} helperText={this.state.alert} onChange={this.changeUsername}/>
                         </ThemeProvider>
                     )
                     }
