@@ -11,9 +11,12 @@ class Racing extends Component {
             text: '',
             userInput: '',
             characters: 0,
+            correctInput: 0,
+            charLength: 0,
             seconds: 0,
             started: false,
-            finished: false
+            finished: false,
+            percentage: 0
         }
     }
 
@@ -23,7 +26,9 @@ class Racing extends Component {
     }
 
     componentDidMount(){
-        this.generateText()
+        let prompt = "Commodo aute ipsum elit pariatur in officia magna esse exercitation laboris labore anim irure velit. Tempor eiusmod ut veniam id minim consequat. Dolor dolor anim sint ex non nulla officia magna ullamco est in. Amet sit quis fugiat adipisicing fugiat ullamco cillum exercitation."
+        this.setText(prompt)
+        this.setCharLength(prompt)
         document.addEventListener("keyup", this._handleKey)
     }
 
@@ -31,12 +36,18 @@ class Racing extends Component {
         document.removeEventListener("keyup", this._handleKey)
     }
 
-    generateText=()=>{
-        this.setState({text: "Commodo aute ipsum elit pariatur in officia magna esse exercitation laboris labore anim irure velit. Tempor eiusmod ut veniam id minim consequat. Dolor dolor anim sint ex non nulla officia magna ullamco est in. Amet sit quis fugiat adipisicing fugiat ullamco cillum exercitation."})
+    setText=(prompt)=>{
+        this.setState({text: prompt})
+    }
+
+    setCharLength(prompt){
+        this.setState({charLength: prompt.replace(/\s+/g, '').length});
     }
 
     onUserInputChange=(e)=>{
         const inputText = e.target.value;
+        console.log(this.state.text)
+        console.log(this.state.charLength)
         this.setTimer();
         this.onFinish(inputText);
         this.setState({userInput: inputText, characters: this.countCorrectCharacters(inputText)})
@@ -50,8 +61,10 @@ class Racing extends Component {
     }
 
     countCorrectCharacters(userInput){
-        const text = this.state.text.replace(' ', '');
-        return userInput.replace(' ', '').split('').filter((s, i) => s === text[i]).length;
+        const text = this.state.text.replace(/\s+/g, '');
+        let correctChars = userInput.replace(/\s+/g, '').split('').filter((s, i) => s === text[i]).length;
+        this.setState({percentage: correctChars/this.state.charLength})
+        return correctChars;
     }
 
     setTimer(){
@@ -65,23 +78,46 @@ class Racing extends Component {
         }
     }
 
+    onCorrectInput(input){        
+        return '#00FF00';
+    }
+
+    onIncorrectInput(){
+        return '#FF0000';
+    }
+
     render() {
         return (
             <div>
                 <h1>Vroom vroom racing</h1>
 
-                <Textblock text={this.state.text} userInput={this.state.userInput}/>
+                {/* <Textblock text={this.state.text} userInput={this.state.userInput}/> */}
+
+                <div>
+                    {
+                        this.state.text.split('').map((s,i) => {
+                            let color;
+                            if (i < this.state.userInput.length){
+                                color = s === this.state.userInput[i] ? this.onCorrectInput() : this.onIncorrectInput();
+                            }
+                            return <span key={i} style={{color: color}}>{s}</span>
+                        })
+                    }
+                </div>
 
                 <br></br>
 
                 <textarea
                     onChange={this.onUserInputChange}
                     value={this.state.userInput}
-                   
                     placeholder="Type Here"
                 ></textarea>
 
                 <Speed seconds={this.state.seconds} characters={this.state.characters}/>
+                
+                <div>
+                    {Math.round(this.state.percentage*100)}%
+                </div>
 
                 <p><Link to ="/">Back to User Creation</Link></p>
                 <p><Link to ="/lobby/:lobbyid">Back to Lobby</Link></p>
