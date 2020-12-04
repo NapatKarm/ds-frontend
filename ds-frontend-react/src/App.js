@@ -4,10 +4,10 @@ import RoutesView from './components/Router/RoutesView'
 
 function App() {
   return (
-    <div className ="App">
-      <header className="App-header">
+    <div>
+      <body>
         <RoutesView/>
-      </header>
+      </body>
     </div>
   )
 }

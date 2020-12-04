@@ -1,4 +1,4 @@
-.App-header {
+/* .App-header {
   background-color: #121212;
   min-height: 100vh;
   display: flex;
@@ -11,4 +11,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+} */
+.App-header {
+  background-color: #121212;
 }

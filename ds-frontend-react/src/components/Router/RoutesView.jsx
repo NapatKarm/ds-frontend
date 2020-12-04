@@ -7,7 +7,7 @@ import socket from '../socket';
 
 //Page Imports
 import UserCreation from '../Pages/UserCreation/UserCreationPage';
-import LobbyJoinCreatePage from '../Pages/LobbyJoinCreatePage';
+import LobbyJoinCreatePage from '../Pages/LobbyJoinCreate/LobbyJoinCreatePage';
 import LobbyPage from '../Pages/LobbyView/LobbyViewPage';
 import RacePage from '../Pages/RacePage';
 
