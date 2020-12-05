@@ -1,8 +1,17 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
 import reCodeLogo from '../../../images/ReCodeGPC.png'
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import './LobbyJoinCreatePage.css';
 
+const colButton = createMuiTheme({
+    palette: {
+        primary: {
+            main: "#FFFFFF"
+        }
+    },
+});
 
 class LobbyJoinCreatePage extends Component {
     constructor(props) {
@@ -21,7 +30,10 @@ class LobbyJoinCreatePage extends Component {
             this.props.history.push("/")
         }
     }
-
+    deleteUser = () => {
+        this.props.userChange(this.state.name);
+        this.props.history.push("/");
+    }
     checkName = () => {
         this.props.history.push("/")
         if (this.props.tempuser === '') {
@@ -35,6 +47,7 @@ class LobbyJoinCreatePage extends Component {
     }
 
     createLobby = async () => {
+        alert("FLASH BANG");
         await this.props.lobbyCreate(this.props.tempuser);
         this.props.socket.emit('createLobby')
         await this.props.socket.on('joinLobby')
@@ -57,9 +70,11 @@ class LobbyJoinCreatePage extends Component {
 
                         </div>
                         <div className="smallBoxRight">
-                            <div>Join Lobby</div>
-                            <div>Create Lobby</div>
-                            <div>Change Username</div>
+                        <ThemeProvider theme={colButton}>
+                            <Button className="colButtonDS" variant="contained" onClick={this.joinLobby}disableElevation>Join Lobby</Button>
+                            <Button className="colButtonDS" variant="contained" onClick={this.createLobby}disableElevation>Create Lobby</Button>
+                            <Button className="colButtonDS" variant="contained" onClick={this.deleteUser}disableElevation>Change Username</Button>
+                            </ThemeProvider>
                         </div>
                     </div>
                 </div>
