@@ -17,8 +17,7 @@ class LobbyJoinCreatePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: '',
-            prompt: ''
+            name: ''
         }
     }
 
@@ -43,14 +42,14 @@ class LobbyJoinCreatePage extends Component {
     joinLobby = () => {
         // this.props.history.push("/lobby")
         console.log("Implementation Underway")
-        //this.props.socket.emit('joinLobby',{lobbyCode:x})
+        //this.props.socket.emit('joinLobby',{lobbyCode:x, username: this.props.tempuser})
     }
 
     createLobby = async () => {
         alert("FLASH BANG");
         await this.props.lobbyCreate(this.props.tempuser);
-        this.props.socket.emit('createLobby')
-        await this.props.socket.on('joinLobby')
+        this.props.socket.emit('createLobby', {username: this.props.tempuser})
+
         this.props.history.push(`/lobby/${this.props.lobbyInfo.lobbyName}`)
     }
 

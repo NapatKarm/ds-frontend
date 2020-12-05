@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import {Link, withRouter} from 'react-router-dom';
 
-import Textblock from '../../store/utilities/Textblock'
-import Speed from '../../store/utilities/speed'
+import Textblock from '../Textblock'
+import Speed from '../speed'
 
 class Racing extends Component {
     constructor(props){
@@ -10,6 +10,13 @@ class Racing extends Component {
         this.state = {
             text: '',
             userInput: '',
+
+            textArr: ["test1","test2","test3","test4","test5","test6"],
+            textArrLength: 30,
+            currentLine: 0,
+            lineCompleted: false,
+
+
             characters: 0,
             correctInput: 0,
             charLength: 0,
@@ -18,6 +25,7 @@ class Racing extends Component {
             finished: false,
             percentage: 0
         }
+        this.setNextLine = this.setNextLine.bind(this);
     }
 
     _handleKey(event){
@@ -25,11 +33,26 @@ class Racing extends Component {
             console.log(event.key);
     }
 
+    setNextLine(event){
+        if(event.code === "Enter")
+            this.setState({currentLine: this.state.currentLine + 1})
+        
+    }
+
     componentDidMount(){
         let prompt = "Commodo aute ipsum elit pariatur in officia magna esse exercitation laboris labore anim irure velit. Tempor eiusmod ut veniam id minim consequat. Dolor dolor anim sint ex non nulla officia magna ullamco est in. Amet sit quis fugiat adipisicing fugiat ullamco cillum exercitation."
         this.setText(prompt)
         this.setCharLength(prompt)
         document.addEventListener("keyup", this._handleKey)
+        document.addEventListener("keyup", this.setNextLine)
+
+        this.props.socket.on("raceInit", ({text, error}) => {
+
+        })
+
+        this.props.socket.on("updateText", ({playerName, percentage, placement}) => {
+
+        })
     }
 
     componentWillUnmount(){
@@ -46,8 +69,6 @@ class Racing extends Component {
 
     onUserInputChange=(e)=>{
         const inputText = e.target.value;
-        console.log(this.state.text)
-        console.log(this.state.charLength)
         this.setTimer();
         this.onFinish(inputText);
         this.setState({userInput: inputText, characters: this.countCorrectCharacters(inputText)})
@@ -63,6 +84,10 @@ class Racing extends Component {
     countCorrectCharacters(userInput){
         const text = this.state.text.replace(/\s+/g, '');
         let correctChars = userInput.replace(/\s+/g, '').split('').filter((s, i) => s === text[i]).length;
+        
+        // if(changed positively)
+        //     this.props.socket.emit('letterTyped', {lobbyCode: x, percentage: this.state.percentage})
+        
         this.setState({percentage: correctChars/this.state.charLength})
         return correctChars;
     }
@@ -91,9 +116,9 @@ class Racing extends Component {
             <div>
                 <h1>Vroom vroom racing</h1>
 
-                {/* <Textblock text={this.state.text} userInput={this.state.userInput}/> */}
+                <Textblock text={this.state.text} userInput={this.state.userInput}/>
 
-                <div>
+                {/* <div>
                     {
                         this.state.text.split('').map((s,i) => {
                             let color;
@@ -103,7 +128,7 @@ class Racing extends Component {
                             return <span key={i} style={{color: color}}>{s}</span>
                         })
                     }
-                </div>
+                </div> */}
 
                 <br></br>
 
@@ -113,8 +138,14 @@ class Racing extends Component {
                     placeholder="Type Here"
                 ></textarea>
 
+                <div>
+                    {this.state.textArr[this.state.currentLine]} <br></br>
+                    {this.state.textArr[this.state.currentLine+1]} <br></br>
+                    {this.state.textArr[this.state.currentLine+2]} <br></br>
+                </div>
+
                 <Speed seconds={this.state.seconds} characters={this.state.characters}/>
-                
+
                 <div>
                     {Math.round(this.state.percentage*100)}%
                 </div>
