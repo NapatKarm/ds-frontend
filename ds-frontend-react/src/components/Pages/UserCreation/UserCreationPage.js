@@ -51,10 +51,10 @@ class UserCreation extends Component {
 
     render() {
         return (
-            <div className="userPage">
+            <div className="pageContainer">
             <div className={`usernameTable${this.state.alert ? "Error" : ""}`}>
                 <div>
-                    <h2 style={{paddingTop:"25%"}}>Welcome to </h2>
+                    <h2 style={{paddingTop:"15%"}}>Welcome to </h2>
                     <img className="logo"src={reCodeLogo} alt="Logo"/>
                 </div>
                 <div style={{ justifyContent: "center", alignItems: "flex-start", display: "flex" }}>

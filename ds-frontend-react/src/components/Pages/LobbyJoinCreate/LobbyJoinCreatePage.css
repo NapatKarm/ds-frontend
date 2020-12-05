@@ -1,0 +1,71 @@
+* {
+    overflow:hidden; /* or auto */
+    }
+
+.createPage {
+    background-color: #1b1c1e;
+    font-size: calc(10px + 2vmin);
+    color: white;
+    height: 100vh;
+    flex-direction: column;
+    /* background-image: url('../../../images/ReCodeBG1.jpg') ;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain; */
+}
+.wrapBox {
+    margin-left: 5%;
+    margin-right: 5%;
+    
+}
+.logoCreate{
+    width: 150px;
+    margin-bottom: 10px;
+}
+.bigBoxCreate {
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+}
+.logoBox {
+    margin-top: 6%;
+    border-bottom: 2px solid #2d2e32;
+    margin-bottom: 2%;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    text-shadow: 2px 2px 2px  #000000;
+}
+.wrapBoxBG {
+    margin-top: 15vh;
+    background-color: #25262a;
+    height: 65vh;
+}
+.smallBoxRight {
+    flex-direction: column;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 30%;
+    margin-right: -5%;
+
+}
+.headingTitle {
+    margin:0;
+    text-shadow: 3px 3px #ff0000;
+}
+.botTextL {
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #42434a;
+}
+.colButtonDS {
+    width: 60%;
+    font-weight: bold !important;
+    border-radius: 0px !important;
+    transition: 0.3s;
+}
+.colButtonDS:hover {
+    background-color: white !important;
+    box-shadow: 6px 6px #ff0000, -6px -6px #08f3ff !important;
+}
