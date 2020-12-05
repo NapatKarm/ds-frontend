@@ -1,4 +1,4 @@
 import { io } from 'socket.io-client';
 
-const socket = io('https://localhost:4000/%27');
+const socket = io('http://34.69.41.196:8000/');
 export default socket;

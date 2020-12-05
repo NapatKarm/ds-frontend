@@ -34,19 +34,41 @@ class Lobby extends Component {
         }, () => {
             console.log("Jeez")
         })
-        this.props.socket.on('joinLobbyResponse',(res)=>{
-            this.setState({lobbyUsers: res.users})
-        })
+        this.props.socket.on("lobbyUpdate", ({error, users}) => {
+            let {username, ready, leader} = users[0]
+        }) 
+
+        this.props.socket.on("createLobbyResponse", ({lobbyCode}) => {
+            console.log(lobbyCode)
+        }) 
     }
     leavingLobby = () => {
         console.log("SENDING LEAVING SIGNALS TO BACKEND");
-        this.props.socket.emit('leaveLobby',{leavingUser:this.props.tempuser})
+        //this.props.socket.emit('leaveLobby',{lobbyCode: x})
         this.props.history.push("/creation")
     }
+    toggleReady = () => {
+        //this.props.socket.emit('toggleReady', {lobbyCode: x})
+    }
+
+    // kickPlayer = () => {
+    //     this.props.socket.emit('kickPlayer', {lobbyCode: x, playerName: kickedPlayer})
+    // }
+    
+    startGame = () => {
+        //this.props.socket.emit('startGame', {lobbyCode: x})
+    }
+
     render() {
         return (
             <div>
                 <div style={{ justifyContent: "space-between", alignItems: "center", display: "flex" }}>
+                    {/* <div>
+                        <Button variant="outlined" color="secondary" startIcon={<ExitToAppIcon />} onClick={this.kickPlayer}>
+                            Kick
+                        </Button>
+                    </div> */}
+
                     <div>
                         <Button variant="outlined" color="secondary" startIcon={<ExitToAppIcon />} onClick={this.leavingLobby}>
                             Leave Lobby
@@ -55,7 +77,7 @@ class Lobby extends Component {
                     <div>
                         <ThemeProvider theme={readyButton}>
 
-                            <Button variant="outlined" color="primary" startIcon={<AlarmOnIcon />}>
+                            <Button variant="outlined" color="primary" startIcon={<AlarmOnIcon />} onClick={this.toggleReady}>
                                 Ready Up
                             </Button>
                         </ThemeProvider>
@@ -70,7 +92,7 @@ class Lobby extends Component {
                     </Grid>
                     <Grid item xs={6}>
                         <Paper>
-                            <p><Link to="/lobby/:lobbyid/racing">START GAME</Link></p>
+                            <p><Link to="/lobby/:lobbyid/racing" onClick={this.startGame}>START GAME</Link></p>
                         </Paper>
                     </Grid>
                     <Grid item xs={6}>
