@@ -1,4 +1,5 @@
 
+import axios from 'axios';
 // Action Types
 const USER_CREATION = "USER_CREATION";
 const ERROR = "Error";
@@ -8,14 +9,18 @@ const USER_CHANGE = "USER_CHANGE";
 const userCreation = (userinfo) => {
     return {
         type: USER_CREATION,
-        payload: userinfo
+        payload: {
+            Username: userinfo
+        }
     }
 }
 
 const error = (err) => {
     return {
         type: ERROR,
-        payload: err
+        payload: {
+            ErrorCode: err.response.data
+        }
     }
 }
 
@@ -29,21 +34,26 @@ const userChange = () => {
 export const userCreationThunk = (userinfo) => async (dispatch) => {
     let res;
     try {
-        res = userinfo+" (TEMPORARY)";
-        console.log(userinfo,res,"Userinfo changed");
-        dispatch(userCreation(res));
+        res = await axios.post(`http://35.239.41.195:8000/addUser`, {
+            Username: userinfo,
+        })
+        console.log(res, "Success Response Creation")
+        dispatch(userCreation(userinfo));
     }
     catch (fetchError) {
+        console.log(fetchError, "Error Response Creation")
         dispatch(error(fetchError));
     }
 }
 
 export const userChangeThunk = (username) => async (dispatch) => {
     try {
-        //send info to delete on the backend yo
+        console.log("Attempting to change User",username)
+        await axios.delete(`http://35.239.41.195:8000/deleteUser`, { data: { Username: username } });
         dispatch(userChange());
     }
     catch (fetchError) {
+        console.log(fetchError, "Error Response Creation")
         dispatch(error(fetchError));
     }
 }

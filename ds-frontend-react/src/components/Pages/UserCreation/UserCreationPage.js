@@ -34,18 +34,26 @@ class UserCreation extends Component {
             alert: ''
         }
     }
-
+    componentDidMount(){
+        this.props.history.push("/");
+    }
     changeUsername = (event) => {
         this.setState({ username: event.target.value })
     }
 
-    usernameCheck = () => {
+    usernameCheck = async () => {
         if (this.state.username === "") {
             this.setState({ alert: "Username cannot be empty." })
         }
         else {
-            this.props.userCreation(this.state.username)
-            this.props.history.push("/creation");
+            await this.props.userCreation(this.state.username)
+            if(this.props.userCreated) {
+                this.props.history.push("/creation"); 
+            }
+            if(this.props.errorCode) {
+                this.setState({alert:this.props.errorCode})
+            }
+            console.log(this.state.alert,"alertin")
         }
     }
 

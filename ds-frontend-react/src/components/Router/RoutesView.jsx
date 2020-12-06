@@ -15,7 +15,7 @@ import RacePage from '../Pages/RacePage';
 class RoutesView extends Component {
     render () {
         const {userCreated}=this.props
-        const UserCreationComponent = () => (<UserCreation userCreation={ this.props.userCreation }/>)
+        const UserCreationComponent = () => (<UserCreation userCreation={ this.props.userCreation } userCreated={this.props.userCreated} errorCode={this.props.errorCode}/>)
         const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser } lobbyJoin={this.props.lobbyJoin} lobbyCreate={this.props.lobbyCreate} lobbyInfo={this.props.lobbyInfo} userChange={this.props.userChange}socket={socket}/>)
         const LobbyComponent = () => (<LobbyPage lobbyInfo={this.props.lobbyInfo} lobbyUpdate={this.props.lobbyUpdate} tempuser={this.props.tempuser} socket={socket}/>)
         const RaceComponent = () => (<RacePage socket={socket}/>)
@@ -40,8 +40,9 @@ class RoutesView extends Component {
 
 const mapState = (state) => {
     return {
-        tempuser: state.tempuser,
-        userCreated: !!state.tempuser,
+        tempuser: state.tempuser.Username,
+        userCreated: !!state.tempuser.Username,
+        errorCode: state.tempuser.ErrorCode,
         lobbyInfo: state.lobbyinfo
     }
 }
