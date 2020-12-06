@@ -30,7 +30,7 @@ class LobbyJoinCreatePage extends Component {
             this.props.history.push("/")
         }
     }
-    deleteUser = () => {
+    changeUser = () => {
         this.props.userChange(this.state.name);
         this.props.history.push("/");
     }
@@ -73,7 +73,7 @@ class LobbyJoinCreatePage extends Component {
                         <ThemeProvider theme={colButton}>
                             <Button className="colButtonDS" variant="contained" onClick={this.joinLobby}disableElevation>Join Lobby</Button>
                             <Button className="colButtonDS" variant="contained" onClick={this.createLobby}disableElevation>Create Lobby</Button>
-                            <Button className="colButtonDS" variant="contained" onClick={this.deleteUser}disableElevation>Change Username</Button>
+                            <Button className="colButtonDS" variant="contained" onClick={this.changeUser}disableElevation>Change Username</Button>
                             </ThemeProvider>
                         </div>
                     </div>
