@@ -4,7 +4,18 @@ import Button from '@material-ui/core/Button';
 import reCodeLogo from '../../../images/ReCodeGPC.png'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import './LobbyJoinCreatePage.css';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
 
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+  
 const colButton = createMuiTheme({
     palette: {
         primary: {
@@ -17,7 +28,9 @@ class LobbyJoinCreatePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: ''
+            name: '',
+            openBool: false,
+            lobbyIDChoice: ""
         }
     }
 
@@ -39,10 +52,14 @@ class LobbyJoinCreatePage extends Component {
             this.props.history.push("/")
         }
     }
-    joinLobby = () => {
+    handleIDChange = (event) => {
+        this.setState({lobbyIDChoice:event.value})
+    }
+    joinLobby = (event) => {
+        event.preventDefault()
         // this.props.history.push("/lobby")
         console.log("Implementation Underway")
-        //this.props.socket.emit('joinLobby',{lobbyCode:x, username: this.props.tempuser})
+        this.props.socket.emit('joinLobby',{lobbyCode:this.state.lobbyIDChoice, username: this.props.tempuser})
     }
 
     createLobby = async () => {
@@ -52,7 +69,17 @@ class LobbyJoinCreatePage extends Component {
 
         this.props.history.push(`/lobby/${this.props.lobbyInfo.lobbyName}`)
     }
-
+    openUp = () => {
+        this.setState({openBool:true})
+    }
+    closeUp = () => {
+        this.setState({openBool:false})
+    }
+    maxLengthCheck = (object) => {
+        if (object.target.value.length > object.target.maxLength) {
+         object.target.value = object.target.value.slice(0, object.target.maxLength)
+          }
+        }
     render() {
         return (
             <div className="createPage">
@@ -70,7 +97,7 @@ class LobbyJoinCreatePage extends Component {
                         </div>
                         <div className="smallBoxRight">
                         <ThemeProvider theme={colButton}>
-                            <Button className="colButtonDS" variant="contained" onClick={this.joinLobby}disableElevation>Join Lobby</Button>
+                            <Button className="colButtonDS" variant="contained" onClick={this.openUp}disableElevation>Join Lobby</Button>
                             <Button className="colButtonDS" variant="contained" onClick={this.createLobby}disableElevation>Create Lobby</Button>
                             <Button className="colButtonDS" variant="contained" onClick={this.changeUser}disableElevation>Change Username</Button>
                             </ThemeProvider>
@@ -79,7 +106,29 @@ class LobbyJoinCreatePage extends Component {
                 </div>
                 </div>
                 <div>
-                    {/*Bottom Content */}
+                <Dialog
+                    open={this.state.openBool}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={this.closeUp}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">{"Enter Lobby ID"}</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        Enter the 6 digits unique Lobby ID from your friend/foe.
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                    <form onSubmit={this.joinLobby}>
+                    <input maxLength = "6" onInput={this.maxLengthCheck} onChange={this.handleIDChange} />
+                    </form>
+                    <Button onClick={this.joinLobby} color="primary">
+                        Enter
+                    </Button>
+                    </DialogActions>
+                </Dialog>
                 </div>
             </div>
         )
