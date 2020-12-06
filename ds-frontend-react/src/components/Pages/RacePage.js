@@ -80,7 +80,7 @@ class Racing extends Component {
         const inputText = e.target.value;
 
         this.setTimer();
-        this.setState({curUserInput: inputText,characters: this.countCorrectCharacters(inputText)})
+        this.setState({userInput: inputText,characters: this.countCorrectCharacters(inputText)})
     }
 
     countCorrectCharacters(userInput){
