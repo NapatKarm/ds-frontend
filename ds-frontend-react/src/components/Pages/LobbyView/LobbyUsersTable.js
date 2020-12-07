@@ -44,7 +44,7 @@ class UsersTable extends Component {
                             </TableCell>
                             <TableCell align="center">{user.ready ? <CheckCircleIcon style={{ color: green[500]}} fontSize="small"/> : <CancelIcon style={{ color: red[500]}} fontSize="small"/>}</TableCell>
                     <TableCell align="center">
-                    {user.username === this.props.tempuser ? "" : <Button onClick={this.kickPlayer(user.username)}>Kick</Button>}
+                    {user.username === this.props.tempuser ? "" : <Button onClick={()=>this.kickPlayer(user.username)}>Kick</Button>}
                     </TableCell>
                         </TableRow>
                     ))):(
