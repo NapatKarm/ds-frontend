@@ -26,7 +26,10 @@ class Lobby extends Component {
         })
         this.props.socket.on('raceInit', ({prompt, error}) => {
             console.log(prompt, error, "straight from raceInit");
-            if(prompt!==undefined) this.props.history.push(`/lobby/${this.state.lobbyName}/racing`);
+            if(prompt!==undefined) {
+                this.props.parsePrompt(prompt);
+                this.props.history.push(`/lobby/${this.state.lobbyName}/racing`);
+            }
         })
         this.setState({
             lobbyName: this.props.lobbyInfo,

@@ -47,7 +47,7 @@ const mapState = (state) => {
         lobbyInfo: state.lobbyinfo.lobbyName,
         lobbyUsers: state.lobbyinfo.users,
         lobbyError: state.lobbyinfo.error,
-        prompt: state.parseinfo.prompt
+        prompt: state.parseinfo
     }
 }
 

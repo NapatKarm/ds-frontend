@@ -6,9 +6,7 @@ const PARSE_PROMPT = "PARSE_PROMPT"
 const parsePrompt = (prompt) => {
     return {
         type: PARSE_PROMPT,
-        payload: {
-            prompt: prompt
-        }
+        payload: prompt
     }
 }
 
@@ -18,7 +16,7 @@ export const parsePromptThunk = (prompt) => (dispatch) => {
     dispatch(parsePrompt(prompt));
 }
 
-export default (state = {prompt:""}, action) => {
+export default (state = {}, action) => {
     switch (action.type) {
         case PARSE_PROMPT:
             return action.payload;
