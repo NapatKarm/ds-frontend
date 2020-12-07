@@ -20,6 +20,9 @@ class Lobby extends Component {
             console.log(error, users, "in view page")
             this.props.lobbyUpdate(users)
         })
+        this.props.socket.on('raceInit', ({prompt, error}) => {
+            console.log(prompt, error, "straight from raceInit");
+        })
         this.setState({
             lobbyName: this.props.lobbyInfo,
             lobbyUsers: this.props.lobbyUsers,
@@ -29,6 +32,7 @@ class Lobby extends Component {
                 lobbyLeader: (this.state.lobbyUsers[0].username===this.props.tempuser)
             })
         }})
+        
     }
     leavingLobby = () => {
         this.props.socket.emit('leaveLobby', { lobbyCode: this.props.lobbyInfo })
@@ -40,9 +44,9 @@ class Lobby extends Component {
     startGameCheck = () => {
         //this.props.socket.emit('startGame', {lobbyCode: x})
         let startCondition= true;
-        for(i = 0; i < this.state.lobbyUsers.length;i++)
+        for(let i = 0; i < this.props.lobbyUsers.length;i++)
         {
-            if(this.state.lobbyUsers[i].ready===false) {
+            if(this.props.lobbyUsers[i].ready===false) {
                 startCondition=false;
                 break;
             }
@@ -51,7 +55,10 @@ class Lobby extends Component {
             this.props.socket.emit('startGame', {lobbyCode: this.state.lobbyName})
             this.props.history.push(`/lobby/${this.state.lobbyName}/racing`)
         } 
-        else alert("Not all players are ready!")
+        else {
+            console.log("Not everyone is ready should run")
+            alert("Not all players are ready!")
+        }
     }
 
     render() {
@@ -70,7 +77,7 @@ class Lobby extends Component {
                                     Ready Up
                                 </Button>
                                 {this.state.lobbyLeader ?
-                                    <Button className="colButtonDSVGG" variant="contained"  disableElevation>
+                                    <Button className="colButtonDSVGG" variant="contained" onClick={this.startGameCheck} disableElevation>
                                         Start Game
                                     </Button>
                                     :
