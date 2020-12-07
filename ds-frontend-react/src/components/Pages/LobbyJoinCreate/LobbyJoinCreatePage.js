@@ -38,6 +38,10 @@ class LobbyJoinCreatePage extends Component {
     componentDidMount() {
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
             if(error!==undefined) this.setState({joinError:error});
+            if(users!==undefined) {
+                this.props.lobbyUpdate(users)
+                this.props.history.push(`/lobby/${users[0].lobbyCode}`);
+            }
         })
         if (typeof this.props.tempuser === 'string') {
             this.setState({ name: this.props.tempuser })
@@ -60,12 +64,10 @@ class LobbyJoinCreatePage extends Component {
     }
     joinLobby = (event) => {
         event.preventDefault()
-        // this.props.history.push("/lobby")
         console.log("Implementation Underway", this.state.lobbyIDChoice);
         if (this.state.lobbyIDChoice.length === 6) {
             this.props.socket.emit('joinLobby', { lobbyCode: this.state.lobbyIDChoice, username: this.props.tempuser })
             document.getElementById('lobbyIDInput').value = '';
-
         }
         else this.setState({ joinError: "Lobby ID must be 6 digits." })
 
