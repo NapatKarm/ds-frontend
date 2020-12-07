@@ -18,7 +18,11 @@ class Lobby extends Component {
     componentDidMount() {
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
             console.log(error, users, "in view page")
-            this.props.lobbyUpdate(users)
+            if(users!==undefined) this.props.lobbyUpdate(users);
+            if(error!==undefined) {
+                this.props.lobbyLeave();
+                this.props.history.push("/creation");
+            }
         })
         this.props.socket.on('raceInit', ({prompt, error}) => {
             console.log(prompt, error, "straight from raceInit");
@@ -36,8 +40,9 @@ class Lobby extends Component {
         
     }
     leavingLobby = () => {
-        this.props.socket.emit('leaveLobby', { lobbyCode: this.props.lobbyInfo })
-        this.props.history.push("/creation")
+        this.props.socket.emit('leaveLobby', { lobbyCode: this.props.lobbyInfo });
+        this.props.lobbyLeave();
+        this.props.history.push("/creation");
     }
     toggleReady = () => {
         this.props.socket.emit('toggleReady', { lobbyCode: this.props.lobbyInfo })
@@ -95,7 +100,7 @@ class Lobby extends Component {
 
                             </div>
                             <div className="smallBoxRightV">
-                                <UsersTable lobbyName={this.props.lobbyInfo} tempuser={this.props.tempuser} users={this.props.lobbyUsers} socket={this.props.socket} />
+                                <UsersTable lobbyName={this.props.lobbyInfo} tempuser={this.props.tempuser} users={this.props.lobbyUsers} socket={this.props.socket} lobbyLeader={this.state.lobbyLeader}/>
                             </div>
                         </div>
                     </div>
