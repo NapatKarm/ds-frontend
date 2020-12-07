@@ -48,12 +48,12 @@ class UserCreation extends Component {
         else {
             await this.props.userCreation(this.state.username)
             if(this.props.userCreated) {
-                this.props.history.push("/creation"); 
+                this.props.socket.emit('newUser', {username: this.state.username});
+                this.props.history.push("/creation");
             }
             if(this.props.errorCode) {
                 this.setState({alert:this.props.errorCode})
             }
-            console.log(this.state.alert,"alertin")
         }
     }
 
@@ -79,9 +79,7 @@ class UserCreation extends Component {
                         </ThemeProvider>
                     )
                     }
-                    <ThemeProvider>
                     <PlayCircleOutlineOutlinedIcon className={`goButton${this.state.alert ? "Error" : ""}`}style={{paddingLeft:"2%",paddingTop:"2%"}}fontSize="large" onClick={this.usernameCheck}/>
-                    </ThemeProvider>
                 </div>
                 </div>
             </div>
