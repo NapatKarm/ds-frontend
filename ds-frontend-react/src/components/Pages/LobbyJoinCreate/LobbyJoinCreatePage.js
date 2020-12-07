@@ -36,9 +36,9 @@ class LobbyJoinCreatePage extends Component {
     }
 
     componentDidMount() {
-        this.props.socket.on("createLobbyResponse", ({ lobbyCode }) => { console.log("LobbyCode YOYO", lobbyCode) })
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
             if(error!==undefined) this.setState({joinError:error});
+            console.log("lobbyUpdate res",error,users)
         })
         if (typeof this.props.tempuser === 'string') {
             this.setState({ name: this.props.tempuser })
@@ -48,7 +48,6 @@ class LobbyJoinCreatePage extends Component {
         }
     }
     componentDidUpdate() {
-        console.log(this.props.lobbyInfo, "ugh creating lobbyinfo or something")
         if (this.props.lobbyInfo !== undefined) {
             this.props.history.push(`/lobby/${this.props.lobbyInfo}`);
         }
@@ -82,7 +81,11 @@ class LobbyJoinCreatePage extends Component {
     createLobby = () => {
         // this.props.lobbyCreate(this.props.tempuser);
         this.props.socket.emit('createLobby', { username: this.props.tempuser })
-        this.props.history.push("/lobby/TEMP")
+        // this.props.history.push("/lobby/TEMP")
+        this.props.socket.on("lobbyUpdate", ({ error, users }) => {
+            if(error!==undefined) this.setState({joinError:error});
+            console.log("lobbyUpdate res",error,users)
+        })
     }
     openUp = () => {
         this.setState({ openBool: true })
