@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import UsersTable from './LobbyUsersTable'
 import './LobbyViewPage.css';
+import Button from '@material-ui/core/Button';
+import { green } from '@material-ui/core/colors';
 
 class Lobby extends Component {
     constructor(props) {
@@ -9,69 +11,88 @@ class Lobby extends Component {
         this.state = {
             lobbyLeader: false,
             lobbyName: "",
-            readyStatus: false,
             lobbyUsers: [],
             loading: true
         }
     }
     componentDidMount() {
-        this.setState({
-            // lobbyName: this.props.lobbyInfo,
-            lobbyName: "TEMP HARDCODE",
-            lobbyUsers: [ 
-                {
-                    username:this.props.tempuser,
-                    status: false
-                }
-            ],
-            loading: false
+        this.props.socket.on("lobbyUpdate", ({ error, users }) => {
+            console.log(error, users, "in view page")
+            this.props.lobbyUpdate(users)
         })
-        this.props.socket.on("lobbyUpdate", ({error, users}) => {
-            // let {username, ready, leader} = users[0]
-        }) 
+        this.setState({
+            lobbyName: this.props.lobbyInfo,
+            lobbyUsers: this.props.lobbyUsers,
+            loading: false
+        }, () => {if(this.state.lobbyUsers.length>0){
+            this.setState({
+                lobbyLeader: (this.state.lobbyUsers[0].username===this.props.tempuser)
+            })
+        }})
     }
     leavingLobby = () => {
-        console.log("SENDING LEAVING SIGNALS TO BACKEND");
-        //this.props.socket.emit('leaveLobby',{lobbyCode: x})
+        this.props.socket.emit('leaveLobby', { lobbyCode: this.props.lobbyInfo })
         this.props.history.push("/creation")
     }
     toggleReady = () => {
-        //this.props.socket.emit('toggleReady', {lobbyCode: x})
+        this.props.socket.emit('toggleReady', { lobbyCode: this.props.lobbyInfo })
     }
-
-    // kickPlayer = () => {
-    //     this.props.socket.emit('kickPlayer', {lobbyCode: x, playerName: kickedPlayer})
-    // }
-    
-    startGame = () => {
+    startGameCheck = () => {
         //this.props.socket.emit('startGame', {lobbyCode: x})
+        let startCondition= true;
+        for(i = 0; i < this.state.lobbyUsers.length;i++)
+        {
+            if(this.state.lobbyUsers[i].ready===false) {
+                startCondition=false;
+                break;
+            }
+        }
+        if(startCondition){
+            this.props.socket.emit('startGame', {lobbyCode: this.state.lobbyName})
+            this.props.history.push(`/lobby/${this.state.lobbyName}/racing`)
+        } 
+        else alert("Not all players are ready!")
     }
 
     render() {
+        console.log("Passing into table", this.state.lobbyUsers)
         return (
             <div className="viewPageV">
                 <div className="wrapBoxBGV">
                     <div className="wrapBoxV">
                         <div className="logoBoxV">
-                            <div>Lobby ID: </div>
+                            <div>Lobby ID: {this.state.lobbyName}</div>
+                            <div>
+                                <Button className="colButtonDSV" variant="contained" onClick={this.leavingLobby} disableElevation>
+                                    Leave Lobby
+                                </Button>
+                                <Button className="colButtonDSV" variant="contained" onClick={this.toggleReady} disableElevation>
+                                    Ready Up
+                                </Button>
+                                {this.state.lobbyLeader ?
+                                    <Button className="colButtonDSVGG" variant="contained"  disableElevation>
+                                        Start Game
+                                    </Button>
+                                    :
+                                    <Button className="colButtonDSVDD" variant="contained"  disableElevation disabled>
+                                        Start Game
+                                    </Button>
+                                }
+
+                            </div>
+
                         </div>
                         <div className="bigBoxCreateV">
                             <div className="smallBoxLeftV">
-                                <h1 className="headingTitleV">CHALLENGE AND<br />CONQUER</h1>
-                                <p className="botTextLV">Buncha text oh lol someone who want eat chicken sometimes <br />I want some chipotle too but you know sometimes corona yeah <br />lol it be like that sometimes.</p>
+                                <h1 className="headingTitleV">TIP#1424: </h1>
+                                <span className="botTextLV">If it seems like you're losing,<br />pressing ALT+F4 increases your WPM by 50!</span>
 
                             </div>
                             <div className="smallBoxRightV">
-                                {/* <ThemeProvider theme={colButton}>
-                                    <Button className="colButtonDS" variant="contained" onClick={this.openUp} disableElevation>Join Lobby</Button>
-                                    <Button className="colButtonDS" variant="contained" onClick={this.createLobby} disableElevation>Create Lobby</Button>
-                                    <Button className="colButtonDS" variant="contained" onClick={this.changeUser} disableElevation>Change Username</Button>
-                                </ThemeProvider> */}
+                                <UsersTable lobbyName={this.props.lobbyInfo} tempuser={this.props.tempuser} users={this.props.lobbyUsers} socket={this.props.socket} />
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
                 </div>
             </div>
         )

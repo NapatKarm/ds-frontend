@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import {userCreationThunk, userChangeThunk} from "../../store/utilities/tempuser";
-import { lobbyJoinThunk, lobbyCreateThunk } from "../../store/utilities/lobbyinfo"
+import { lobbyUpdateThunk } from "../../store/utilities/lobbyinfo"
 import socket from '../socket'; 
 
 //Page Imports
@@ -16,8 +16,8 @@ class RoutesView extends Component {
     render () {
         const {userCreated}=this.props
         const UserCreationComponent = () => (<UserCreation socket={socket} userCreation={ this.props.userCreation } userCreated={this.props.userCreated} errorCode={this.props.errorCode}/>)
-        const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser } lobbyJoin={this.props.lobbyJoin} lobbyCreate={this.props.lobbyCreate} lobbyInfo={this.props.lobbyInfo} userChange={this.props.userChange}socket={socket}/>)
-        const LobbyComponent = () => (<LobbyPage lobbyInfo={this.props.lobbyInfo} tempuser={this.props.tempuser} socket={socket}/>)
+        const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser } lobbyUpdate={this.props.lobbyUpdate} lobbyInfo={this.props.lobbyInfo} userChange={this.props.userChange}socket={socket}/>)
+        const LobbyComponent = () => (<LobbyPage lobbyInfo={this.props.lobbyInfo} tempuser={this.props.tempuser} lobbyUpdate={this.props.lobbyUpdate} lobbyUsers={this.props.lobbyUsers}socket={socket}/>)
         const RaceComponent = () => (<RacePage socket={socket}/>)
         return (
         <Router>
@@ -44,6 +44,7 @@ const mapState = (state) => {
         userCreated: !!state.tempuser.Username,
         errorCode: state.tempuser.ErrorCode,
         lobbyInfo: state.lobbyinfo.lobbyName,
+        lobbyUsers: state.lobbyinfo.users,
         lobbyError: state.lobbyinfo.error
     }
 }
@@ -51,8 +52,7 @@ const mapState = (state) => {
 const mapDispatch = (dispatch) => {
     return {
         userCreation: (userinfo) => dispatch(userCreationThunk(userinfo)),
-        lobbyJoin: (tempuser, lobbyID) => dispatch(lobbyJoinThunk(tempuser, lobbyID)),
-        lobbyCreate: (tempuser) => dispatch(lobbyCreateThunk(tempuser)),
+        lobbyUpdate: (users) => dispatch(lobbyUpdateThunk(users)),
         userChange: (tempuser) => dispatch(userChangeThunk(tempuser))
     }
 }
