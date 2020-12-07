@@ -8,10 +8,10 @@
     color: white;
     height: 100vh;
     flex-direction: column;
-    background-image: url('../../../images/ReCodeBG3.jpg') ;
+    /* background-image: url('../../../images/ReCodeBG1.jpg') ;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain; */
 }
 .wrapBox {
     margin-left: 5%;
@@ -38,13 +38,8 @@
 }
 .wrapBoxBG {
     margin-top: 15vh;
-    margin-left: 15%;
     background-color: #25262a;
-    height: 55vh;
-    transition: 0.3s;
-}
-.wrapBoxBG:hover {
-    box-shadow: 6px 6px #ff0000be, -6px -6px #08f3ffbe !important;
+    height: 65vh;
 }
 .smallBoxRight {
     flex-direction: column;
@@ -62,7 +57,7 @@
 .botTextL {
     font-size: 25px;
     font-family: Arial, Helvetica, sans-serif;
-    color: #787985;
+    color: #42434a;
 }
 .colButtonDS {
     width: 60%;
@@ -72,9 +67,5 @@
 }
 .colButtonDS:hover {
     background-color: white !important;
-    box-shadow: 6px 6px #ff0000, -6px -6px #08f3ff !important;
-}
-.dialogBox {
-    border-radius: 0px !important;
     box-shadow: 6px 6px #ff0000, -6px -6px #08f3ff !important;
 }
