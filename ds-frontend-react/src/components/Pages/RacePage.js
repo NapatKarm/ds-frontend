@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import {Link, withRouter} from 'react-router-dom';
-
-import Textblock from '../Textblock'
 import Speed from '../speed'
 
 class Racing extends Component {
