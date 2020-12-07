@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import {userCreationThunk, userChangeThunk} from "../../store/utilities/tempuser";
-import { lobbyUpdateThunk, lobbyLeaveThunk } from "../../store/utilities/lobbyinfo"
+import { lobbyUpdateThunk, lobbyLeaveThunk } from "../../store/utilities/lobbyinfo";
+import { parsePromptThunk } from "../../store/utilities/promptinfo";
 import socket from '../socket'; 
 
 //Page Imports
@@ -17,8 +18,8 @@ class RoutesView extends Component {
         const {userCreated}=this.props
         const UserCreationComponent = () => (<UserCreation socket={socket} userCreation={ this.props.userCreation } userCreated={this.props.userCreated} errorCode={this.props.errorCode}/>)
         const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser } lobbyUpdate={this.props.lobbyUpdate} lobbyInfo={this.props.lobbyInfo} userChange={this.props.userChange}socket={socket}/>)
-        const LobbyComponent = () => (<LobbyPage lobbyInfo={this.props.lobbyInfo} tempuser={this.props.tempuser} lobbyUpdate={this.props.lobbyUpdate} lobbyUsers={this.props.lobbyUsers} lobbyLeave={this.props.lobbyLeave} socket={socket}/>)
-        const RaceComponent = () => (<RacePage socket={socket}/>)
+        const LobbyComponent = () => (<LobbyPage lobbyInfo={this.props.lobbyInfo} tempuser={this.props.tempuser} lobbyUpdate={this.props.lobbyUpdate} lobbyUsers={this.props.lobbyUsers} lobbyLeave={this.props.lobbyLeave} parsePrompt={this.props.parsePrompt} socket={socket}/>)
+        const RaceComponent = () => (<RacePage prompt={this.props.prompt} socket={socket}/>)
         return (
         <Router>
             <Switch>
@@ -45,7 +46,8 @@ const mapState = (state) => {
         errorCode: state.tempuser.ErrorCode,
         lobbyInfo: state.lobbyinfo.lobbyName,
         lobbyUsers: state.lobbyinfo.users,
-        lobbyError: state.lobbyinfo.error
+        lobbyError: state.lobbyinfo.error,
+        prompt: state.parseinfo
     }
 }
 
@@ -54,7 +56,8 @@ const mapDispatch = (dispatch) => {
         userCreation: (userinfo) => dispatch(userCreationThunk(userinfo)),
         lobbyUpdate: (users) => dispatch(lobbyUpdateThunk(users)),
         userChange: (tempuser) => dispatch(userChangeThunk(tempuser)),
-        lobbyLeave: () => dispatch(lobbyLeaveThunk())
+        lobbyLeave: () => dispatch(lobbyLeaveThunk()),
+        parsePrompt: (prompt) => dispatch(parsePromptThunk(prompt))
     }
 }
 
