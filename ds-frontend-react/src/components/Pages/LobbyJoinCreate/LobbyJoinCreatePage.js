@@ -14,8 +14,8 @@ import Slide from '@material-ui/core/Slide';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
-  });
-  
+});
+
 const colButton = createMuiTheme({
     palette: {
         primary: {
@@ -30,16 +30,27 @@ class LobbyJoinCreatePage extends Component {
         this.state = {
             name: '',
             openBool: false,
-            lobbyIDChoice: ""
+            lobbyIDChoice: "",
+            joinError: ""
         }
     }
 
     componentDidMount() {
+        this.props.socket.on("createLobbyResponse", ({ lobbyCode }) => { console.log("LobbyCode YOYO", lobbyCode) })
+        this.props.socket.on("lobbyUpdate", ({ error, users }) => {
+            if(error!==undefined) this.setState({joinError:error});
+        })
         if (typeof this.props.tempuser === 'string') {
             this.setState({ name: this.props.tempuser })
         }
         else {
             this.props.history.push("/")
+        }
+    }
+    componentDidUpdate() {
+        console.log(this.props.lobbyInfo, "ugh creating lobbyinfo or something")
+        if (this.props.lobbyInfo !== undefined) {
+            this.props.history.push(`/lobby/${this.props.lobbyInfo}`);
         }
     }
     changeUser = () => {
@@ -53,82 +64,87 @@ class LobbyJoinCreatePage extends Component {
         }
     }
     handleIDChange = (event) => {
-        this.setState({lobbyIDChoice:event.value})
+        this.setState({ lobbyIDChoice: event.target.value })
     }
     joinLobby = (event) => {
         event.preventDefault()
         // this.props.history.push("/lobby")
-        console.log("Implementation Underway")
-        this.props.socket.emit('joinLobby',{lobbyCode:this.state.lobbyIDChoice, username: this.props.tempuser})
+        console.log("Implementation Underway", this.state.lobbyIDChoice);
+        if (this.state.lobbyIDChoice.length === 6) {
+            this.props.socket.emit('joinLobby', { lobbyCode: this.state.lobbyIDChoice, username: this.props.tempuser })
+            document.getElementById('lobbyIDInput').value = '';
+
+        }
+        else this.setState({ joinError: "Lobby ID must be 6 digits." })
+
     }
 
-    createLobby = async () => {
-        alert("FLASH BANG");
-        await this.props.lobbyCreate(this.props.tempuser);
-        this.props.socket.emit('createLobby', {username: this.props.tempuser})
-
-        this.props.history.push(`/lobby/${this.props.lobbyInfo.lobbyName}`)
+    createLobby = () => {
+        // this.props.lobbyCreate(this.props.tempuser);
+        this.props.socket.emit('createLobby', { username: this.props.tempuser })
+        this.props.history.push("/lobby/TEMP")
     }
     openUp = () => {
-        this.setState({openBool:true})
+        this.setState({ openBool: true })
     }
     closeUp = () => {
-        this.setState({openBool:false})
+        this.setState({ openBool: false })
     }
     maxLengthCheck = (object) => {
         if (object.target.value.length > object.target.maxLength) {
-         object.target.value = object.target.value.slice(0, object.target.maxLength)
-          }
+            object.target.value = object.target.value.slice(0, object.target.maxLength)
         }
+    }
     render() {
         return (
             <div className="createPage">
                 <div className="wrapBoxBG">
-                <div className="wrapBox">
-                    <div className="logoBox">
-                        <img className="logoCreate" src={reCodeLogo} alt="Logo" />
-        <div>USER: {this.state.name}</div>
-                    </div>
-                    <div className="bigBoxCreate">
-                        <div className="smallBoxLeft">
-                            <h1 className="headingTitle">CHALLENGE AND<br/>CONQUER</h1>
-                                <p className="botTextL">Buncha text oh lol someone who want eat chicken sometimes <br/>I want some chipotle too but you know sometimes corona yeah <br/>lol it be like that sometimes.</p>
+                    <div className="wrapBox">
+                        <div className="logoBox">
+                            <img className="logoCreate" src={reCodeLogo} alt="Logo" />
+                            <div>USER: {this.state.name}</div>
+                        </div>
+                        <div className="bigBoxCreate">
+                            <div className="smallBoxLeft">
+                                <h1 className="headingTitle">CHALLENGE AND<br />CONQUER</h1>
+                                <p className="botTextL">Buncha text oh lol someone who want eat chicken sometimes <br />I want some chipotle too but you know sometimes corona yeah <br />lol it be like that sometimes.</p>
 
-                        </div>
-                        <div className="smallBoxRight">
-                        <ThemeProvider theme={colButton}>
-                            <Button className="colButtonDS" variant="contained" onClick={this.openUp}disableElevation>Join Lobby</Button>
-                            <Button className="colButtonDS" variant="contained" onClick={this.createLobby}disableElevation>Create Lobby</Button>
-                            <Button className="colButtonDS" variant="contained" onClick={this.changeUser}disableElevation>Change Username</Button>
-                            </ThemeProvider>
+                            </div>
+                            <div className="smallBoxRight">
+                                <ThemeProvider theme={colButton}>
+                                    <Button className="colButtonDS" variant="contained" onClick={this.openUp} disableElevation>Join Lobby</Button>
+                                    <Button className="colButtonDS" variant="contained" onClick={this.createLobby} disableElevation>Create Lobby</Button>
+                                    <Button className="colButtonDS" variant="contained" onClick={this.changeUser} disableElevation>Change Username</Button>
+                                </ThemeProvider>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
                 <div>
-                <Dialog
-                    open={this.state.openBool}
-                    TransitionComponent={Transition}
-                    keepMounted
-                    onClose={this.closeUp}
-                    aria-labelledby="alert-dialog-slide-title"
-                    aria-describedby="alert-dialog-slide-description"
-                >
-                    <DialogTitle id="alert-dialog-slide-title">{"Enter Lobby ID"}</DialogTitle>
-                    <DialogContent>
-                    <DialogContentText id="alert-dialog-slide-description">
-                        Enter the 6 digits unique Lobby ID from your friend/foe.
+                    <Dialog
+                        open={this.state.openBool}
+                        TransitionComponent={Transition}
+                        keepMounted
+                        onClose={this.closeUp}
+                        aria-labelledby="alert-dialog-slide-title"
+                        aria-describedby="alert-dialog-slide-description"
+                    >
+                        <DialogTitle id="alert-dialog-slide-title">{"Enter Lobby ID"}</DialogTitle>
+                        <DialogContent>
+                            <DialogContentText id="alert-dialog-slide-description">
+                                Enter the 6 digits unique Lobby ID from your friend/foe.
+        <div className="errorMSG">{this.state.joinError? `${this.state.joinError}`:""}</div>
                     </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                    <form onSubmit={this.joinLobby}>
-                    <input maxLength = "6" onInput={this.maxLengthCheck} onChange={this.handleIDChange} />
-                    </form>
-                    <Button onClick={this.joinLobby} color="primary">
-                        Enter
+                        </DialogContent>
+                        <DialogActions>
+                            <form onSubmit={this.joinLobby}>
+                                <input id="lobbyIDInput" maxLength="6" onInput={this.maxLengthCheck} onChange={this.handleIDChange} />
+                            </form>
+                            <Button onClick={this.joinLobby} color="primary">
+                                Enter
                     </Button>
-                    </DialogActions>
-                </Dialog>
+                        </DialogActions>
+                    </Dialog>
                 </div>
             </div>
         )
