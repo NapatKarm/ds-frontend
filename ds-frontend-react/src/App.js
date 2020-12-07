@@ -5,9 +5,7 @@ import RoutesView from './components/Router/RoutesView'
 function App() {
   return (
     <div>
-      <body>
         <RoutesView/>
-      </body>
     </div>
   )
 }

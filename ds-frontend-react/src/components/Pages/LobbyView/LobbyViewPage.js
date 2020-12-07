@@ -1,107 +1,101 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import UsersTable from './LobbyUsersTable'
-import Grid from '@material-ui/core/Grid';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Paper from '@material-ui/core/Paper';
+import './LobbyViewPage.css';
 import Button from '@material-ui/core/Button';
-import AlarmOnIcon from '@material-ui/icons/AlarmOn';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
-
-const readyButton = createMuiTheme({
-    palette: {
-        primary: green,
-    },
-});
 
 class Lobby extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            lobbyLeader: false,
             lobbyName: "",
-            readyStatus: false,
             lobbyUsers: [],
             loading: true
         }
     }
     componentDidMount() {
-        this.setState({
-            lobbyName: this.props.lobbyInfo.lobbyName,
-            lobbyUsers: this.props.lobbyInfo.users,
-            loading: false
-        }, () => {
-            console.log("Jeez")
+        this.props.socket.on("lobbyUpdate", ({ error, users }) => {
+            console.log(error, users, "in view page")
+            this.props.lobbyUpdate(users)
         })
-        this.props.socket.on("lobbyUpdate", ({error, users}) => {
-            let {username, ready, leader} = users[0]
-        }) 
-
-        this.props.socket.on("createLobbyResponse", ({lobbyCode}) => {
-            console.log(lobbyCode)
-        }) 
+        this.setState({
+            lobbyName: this.props.lobbyInfo,
+            lobbyUsers: this.props.lobbyUsers,
+            loading: false
+        }, () => {if(this.state.lobbyUsers.length>0){
+            this.setState({
+                lobbyLeader: (this.state.lobbyUsers[0].username===this.props.tempuser)
+            })
+        }})
     }
     leavingLobby = () => {
-        console.log("SENDING LEAVING SIGNALS TO BACKEND");
-        //this.props.socket.emit('leaveLobby',{lobbyCode: x})
+        this.props.socket.emit('leaveLobby', { lobbyCode: this.props.lobbyInfo })
         this.props.history.push("/creation")
     }
     toggleReady = () => {
-        //this.props.socket.emit('toggleReady', {lobbyCode: x})
+        this.props.socket.emit('toggleReady', { lobbyCode: this.props.lobbyInfo })
     }
-
-    // kickPlayer = () => {
-    //     this.props.socket.emit('kickPlayer', {lobbyCode: x, playerName: kickedPlayer})
-    // }
-    
-    startGame = () => {
+    startGameCheck = () => {
         //this.props.socket.emit('startGame', {lobbyCode: x})
+        let startCondition= true;
+        for(i = 0; i < this.state.lobbyUsers.length;i++)
+        {
+            if(this.state.lobbyUsers[i].ready===false) {
+                startCondition=false;
+                break;
+            }
+        }
+        if(startCondition){
+            this.props.socket.emit('startGame', {lobbyCode: this.state.lobbyName})
+            this.props.history.push(`/lobby/${this.state.lobbyName}/racing`)
+        } 
+        else alert("Not all players are ready!")
     }
 
     render() {
+        console.log("Passing into table", this.state.lobbyUsers)
         return (
-            <div>
-                <div style={{ justifyContent: "space-between", alignItems: "center", display: "flex" }}>
-                    {/* <div>
-                        <Button variant="outlined" color="secondary" startIcon={<ExitToAppIcon />} onClick={this.kickPlayer}>
-                            Kick
-                        </Button>
-                    </div> */}
+            <div className="viewPageV">
+                <div className="wrapBoxBGV">
+                    <div className="wrapBoxV">
+                        <div className="logoBoxV">
+                            <div>Lobby ID: {this.state.lobbyName}</div>
+                            <div>
+                                <Button className="colButtonDSV" variant="contained" onClick={this.leavingLobby} disableElevation>
+                                    Leave Lobby
+                                </Button>
+                                <Button className="colButtonDSV" variant="contained" onClick={this.toggleReady} disableElevation>
+                                    Ready Up
+                                </Button>
+                                {this.state.lobbyLeader ?
+                                    <Button className="colButtonDSVGG" variant="contained"  disableElevation>
+                                        Start Game
+                                    </Button>
+                                    :
+                                    <Button className="colButtonDSVDD" variant="contained"  disableElevation disabled>
+                                        Start Game
+                                    </Button>
+                                }
 
-                    <div>
-                        <Button variant="outlined" color="secondary" startIcon={<ExitToAppIcon />} onClick={this.leavingLobby}>
-                            Leave Lobby
-                            </Button>
-                    </div>
-                    <div>
-                        <ThemeProvider theme={readyButton}>
+                            </div>
 
-                            <Button variant="outlined" color="primary" startIcon={<AlarmOnIcon />} onClick={this.toggleReady}>
-                                Ready Up
-                            </Button>
-                        </ThemeProvider>
+                        </div>
+                        <div className="bigBoxCreateV">
+                            <div className="smallBoxLeftV">
+                                <h1 className="headingTitleV">TIP#1424: </h1>
+                                <span className="botTextLV">If it seems like you're losing,<br />pressing ALT+F4 increases your WPM by 50!</span>
+
+                            </div>
+                            <div className="smallBoxRightV">
+                                <UsersTable lobbyName={this.props.lobbyInfo} tempuser={this.props.tempuser} users={this.props.lobbyUsers} socket={this.props.socket} />
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <Grid container spacing={3} alignItems="stretch" style={{ backgroundColor: "#333", borderRadius: ".25rem", marginTop: "20px" }}>
-                    <Grid item xs={12} >
-                        <Paper style={{ textAlign: "center", padding: "10px", margin: "auto" }}>
-                            <div style={{ justifyContent: "left" }}>LobbyID: {this.state.lobbyName}</div>
-                            <div></div>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Paper>
-                            <p><Link to="/lobby/:lobbyid/racing" onClick={this.startGame}>START GAME</Link></p>
-                        </Paper>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Paper>{this.state.loading ? <CircularProgress /> : <UsersTable tempuser={this.props.tempuser} users={this.state.lobbyUsers} />}</Paper>
-                    </Grid>
-                </Grid>
             </div>
         )
     }
 }
-
 export default withRouter(Lobby)
