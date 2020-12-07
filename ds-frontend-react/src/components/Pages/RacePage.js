@@ -6,13 +6,13 @@ class Racing extends Component {
     constructor(props){
         super(props);
         this.state = {
-            text: '',
-            userInput: '',
-            lastLine: '',
+            totalUserInput: '',
+            tempUesrInput: '',
+            curUserInput: '',
 
-            textString: "test1\ntest2\ntest3\ntest4\ntest5\n",
-            textArr: ["test1","test2","test3","test4","test5"],
-            textArrLength: 25,
+            textString: '',
+            textArr: ["place holder"],
+            textArrLength: 0,
             currentLine: 0,
 
             characters: 0,
@@ -21,38 +21,13 @@ class Racing extends Component {
             finished: false,
             percentage: 0
         }
-        this.setNextLine = this.setNextLine.bind(this);
-    }
-
-    _handleKey(event){
-        if(event.key.length === 1){}
-            //console.log(event.key);
-    }
-
-    setNextLine(event){
-        let lastLine = this.state.userInput.substr(this.state.userInput.indexOf("\n", this.state.userInput.length-this.state.textArr[this.state.currentLine].length-1)+1)
-        console.log("LastLine: " + lastLine + " Size: " + lastLine.length)
-        this.setState({lastLine: lastLine})
-        console.log("ArrayCurrentLine: " + this.state.textArr[this.state.currentLine] + " Size: " + lastLine.length)
-        if(event.code === "Enter" && lastLine !== this.state.textArr[this.state.currentLine]){
-            console.log("ENTERED")
-            if(this.state.currentLine < this.state.textArr.length-1){
-                this.setState({currentLine: this.state.currentLine + 1})
-            }
-        }
-
-        this.checkIfComplete()
     }
 
     componentDidMount(){
-        //let prompt = "Commodo aute ipsum elit pariatur in officia magna esse exercitation laboris labore anim irure velit. Tempor eiusmod ut veniam id minim consequat. Dolor dolor anim sint ex non nulla officia magna ullamco est in. Amet sit quis fugiat adipisicing fugiat ullamco cillum exercitation."
-        let prompt = this.state.textArr[this.state.currentLine]
-
-        document.addEventListener("keyup", this._handleKey)
-        document.addEventListener("keyup", this.setNextLine)
-
-        this.props.socket.on("raceInit", ({text, error}) => {
-            
+        this.props.socket.on("raceInit", ({prompt, error}) => {
+            let replacedPrompt = prompt.replaceAll('|', '')
+            this.setState({textString: replacedPrompt, textArr: prompt.split('|'), textArrLength: replacedPrompt.length})
+            console.log(prompt.replaceAll('|', ''), "\n", prompt.split('|'))
         })
 
         this.props.socket.on("updateText", ({playerName, percentage, placement}) => {
@@ -60,30 +35,18 @@ class Racing extends Component {
         })
     }
 
-    componentWillUnmount(){
-        document.removeEventListener("keyup", this._handleKey)
-        document.removeEventListener("keyup", this.setNextLine)
-    }
-
-    checkIfComplete(){
-        if(this.state.userInput === this.state.textString) {
-            console.log("Done")
-            document.getElementById("textArea").disabled = true;
-            clearInterval(this.interval);
-            this.setState({finished: true})
-        }
-    }
-
     onUserInputChange=(e)=>{
         const inputText = e.target.value;
 
+        let tempInput = this.state.totalUserInput+inputText
+
         this.setTimer();
-        this.setState({userInput: inputText,characters: this.countCorrectCharacters(inputText)})
+        this.setState({curUserInput: inputText, tempUserInput: this.state.totalUserInput+inputText, characters: this.countCorrectCharacters(tempInput)})
     }
 
-    countCorrectCharacters(userInput){
+    countCorrectCharacters(tempInput){
         const text = this.state.textString.replace(/\s+/g, '');
-        let correctChars = this.state.userInput.replace(/\s+/g, '').split('').filter((s, i) => s === text[i]).length;
+        let correctChars = tempInput.replace(/\s+/g, '').split('').filter((s, i) => s === text[i]).length;
 
         //if(correctChars/this.state.textArrLength > this.state.percentage)
             //this.props.socket.emit('letterTyped', {lobbyCode: x, percentage: this.state.percentage})
@@ -104,19 +67,40 @@ class Racing extends Component {
         }
     }
 
+    handleSubmit = (submit) => {
+        submit.preventDefault();
+        let totalInput = this.state.totalUserInput+this.state.curUserInput
+        if(this.state.finished === false && this.state.curUserInput === this.state.textArr[this.state.currentLine]){
+            this.setState({curUserInput: '', totalUserInput: totalInput})
+            if(this.state.currentLine < this.state.textArr.length-1){
+                this.setState({currentLine: this.state.currentLine + 1})
+            }
+        }
+        this.checkIfComplete(totalInput);
+        console.log("Completed");
+    }
+
+    checkIfComplete(totalInput){
+        console.log("TOTAL: ", totalInput)
+        if(totalInput === this.state.textString) {
+            console.log("Done")
+            document.getElementById("textArea").disabled = true;
+            clearInterval(this.interval);
+            this.setState({finished: true});
+        }
+    }
+
     render() {
         return (
             <div>
                 <h1>Vroom vroom racing</h1>
 
-                {/* <Textblock text={this.state.textArr[this.state.currentLine]} userInput={this.state.userInput}/> */}
-
                 <div>
                     {
                         this.state.textArr[this.state.currentLine].split('').map((s,i) => {
                             let color;
-                            if (i < this.state.lastLine.length){
-                                color = s === this.state.lastLine[i] ? '#00FF00' : '#FF0000';
+                            if (i < this.state.curUserInput.length){
+                                color = s === this.state.curUserInput[i] ? '#00FF00' : '#FF0000';
                             }
                             return <span key={i} style={{backgroundColor: color}}>{s}</span>
                         })
@@ -128,14 +112,12 @@ class Racing extends Component {
 
                 <br></br>
 
-                <textarea
-                    id="textArea"
-                    onChange={this.onUserInputChange}
-                    value={this.state.userInput}
-                    placeholder="Type Here"
-                ></textarea>
+                <form onSubmit={this.handleSubmit}>
+                    <input tabindex="-1" id="textArea" onChange={this.onUserInputChange} value={this.state.curUserInput}></input>
+                </form>
 
                 <div>{this.state.seconds}s</div>
+
                 <Speed seconds={this.state.seconds} characters={this.state.characters}/>
                 
                 <div>

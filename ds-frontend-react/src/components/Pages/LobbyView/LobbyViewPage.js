@@ -58,6 +58,7 @@ class Lobby extends Component {
         }
         if(startCondition){
             this.props.socket.emit('startGame', {lobbyCode: this.state.lobbyName})
+            this.props.history.push(`/lobby/${this.state.lobbyName}/racing`)
         } 
         else {
             console.log("Not everyone is ready should run")
