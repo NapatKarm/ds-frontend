@@ -6,9 +6,8 @@ import { composeWithDevTools } from "redux-devtools-extension";
 //reducer functions
 import tempuser from "./utilities/tempuser";
 import lobbyinfo from "./utilities/lobbyinfo";
-import promptinfo from "./utilities/promptinfo";
 
-const rootReducer = combineReducers({tempuser,lobbyinfo, promptinfo});
+const rootReducer = combineReducers({tempuser,lobbyinfo});
 const logger = createLogger({ collapsed: true });
 const middleware = composeWithDevTools(applyMiddleware(thunkMiddleware, logger));
 const store = createStore(rootReducer, middleware);
