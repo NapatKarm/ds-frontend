@@ -24,15 +24,26 @@ class Racing extends Component {
     }
 
     componentDidMount(){
-        this.props.socket.on("raceInit", ({prompt, error}) => {
-            let replacedPrompt = prompt.replaceAll('|', '')
-            this.setState({textString: replacedPrompt, textArr: prompt.split('|'), textArrLength: replacedPrompt.length})
-            console.log(prompt.replaceAll('|', ''), "\n", prompt.split('|'))
-        })
+        if(this.props.prompt !== undefined){
+            console.log(this.props.prompt)
+
+            this.setState({textString: this.props.prompt.textString, textArr: this.props.prompt.textArr, textArrLength: this.props.prompt.textArrLength}, () =>{
+                console.log("TextString: ", this.state.textString, this.state.textArr, this.state.textArrLength)
+            })
+
+
+        }
+
+
 
         this.props.socket.on("updateText", ({playerName, percentage, placement}) => {
 
         })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        console.log(nextProps)
+        console.log("PROMPT", this.props.prompt)
     }
 
     onUserInputChange=(e)=>{
@@ -45,14 +56,15 @@ class Racing extends Component {
     }
 
     countCorrectCharacters(tempInput){
-        const text = this.state.textString.replace(/\s+/g, '');
+        const text = this.props.prompt.textString.replace(/\s+/g, '');
         let correctChars = tempInput.replace(/\s+/g, '').split('').filter((s, i) => s === text[i]).length;
 
-        //if(correctChars/this.state.textArrLength > this.state.percentage)
-            //this.props.socket.emit('letterTyped', {lobbyCode: x, percentage: this.state.percentage})
-        //console.log(this.state.correctInput)
+        if(correctChars/this.state.textArrLength > this.state.percentage)
+            this.props.socket.emit('letterTyped', {lobbyCode: this.props.lobbyInfo, percentage: this.state.percentage})
+        console.log(this.props.lobbyInfo)
+        console.log(this.state.correctInput)
 
-        this.setState({percentage: correctChars/this.state.textArrLength})
+        this.setState({percentage: correctChars/this.props.prompt.textArrLength})
         return correctChars;
     }
 
@@ -70,9 +82,9 @@ class Racing extends Component {
     handleSubmit = (submit) => {
         submit.preventDefault();
         let totalInput = this.state.totalUserInput+this.state.curUserInput
-        if(this.state.finished === false && this.state.curUserInput === this.state.textArr[this.state.currentLine]){
+        if(this.state.finished === false && this.state.curUserInput === this.props.prompt.textArr[this.state.currentLine]){
             this.setState({curUserInput: '', totalUserInput: totalInput})
-            if(this.state.currentLine < this.state.textArr.length-1){
+            if(this.state.currentLine < this.props.prompt.textArr.length-1){
                 this.setState({currentLine: this.state.currentLine + 1})
             }
         }
@@ -96,19 +108,19 @@ class Racing extends Component {
                 <h1>Vroom vroom racing</h1>
 
                 <div>
-                    {
-                        this.state.textArr[this.state.currentLine].split('').map((s,i) => {
+                    {this.props.prompt.textArr?(
+                        this.props.prompt.textArr[this.state.currentLine].split('').map((s,i) => {
                             let color;
                             if (i < this.state.curUserInput.length){
                                 color = s === this.state.curUserInput[i] ? '#00FF00' : '#FF0000';
                             }
-                            return <span key={i} style={{backgroundColor: color}}>{s}</span>
-                        })
+                            return <span key={i} style={{color: color}}>{s}</span>
+                        })):('')
                     }
                 </div>
 
-                <div>{this.state.textArr[this.state.currentLine+1]}</div>
-                <div>{this.state.textArr[this.state.currentLine+2]}</div>
+                <div>{this.props.prompt.textArr?(this.props.prompt.textArr[this.state.currentLine+1]):('')}</div>
+                <div>{this.props.prompt.textArr?(this.props.prompt.textArr[this.state.currentLine+2]):('')}</div>
 
                 <br></br>
 

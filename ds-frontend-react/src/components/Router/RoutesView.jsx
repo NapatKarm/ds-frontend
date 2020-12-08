@@ -19,7 +19,7 @@ class RoutesView extends Component {
         const UserCreationComponent = () => (<UserCreation socket={socket} userCreation={ this.props.userCreation } userCreated={this.props.userCreated} errorCode={this.props.errorCode}/>)
         const LobbyJoinCreateCompenent = () => (<LobbyJoinCreatePage tempuser={ this.props.tempuser } lobbyUpdate={this.props.lobbyUpdate} lobbyInfo={this.props.lobbyInfo} userChange={this.props.userChange}socket={socket}/>)
         const LobbyComponent = () => (<LobbyPage lobbyInfo={this.props.lobbyInfo} tempuser={this.props.tempuser} lobbyUpdate={this.props.lobbyUpdate} lobbyUsers={this.props.lobbyUsers} lobbyLeave={this.props.lobbyLeave} parsePrompt={this.props.parsePrompt} socket={socket}/>)
-        const RaceComponent = () => (<RacePage prompt={this.props.prompt} socket={socket}/>)
+        const RaceComponent = () => (<RacePage prompt={this.props.prompt} lobbyInfo={this.props.lobbyInfo} socket={socket}/>)
         return (
         <Router>
             <Switch>
@@ -47,7 +47,7 @@ const mapState = (state) => {
         lobbyInfo: state.lobbyinfo.lobbyName,
         lobbyUsers: state.lobbyinfo.users,
         lobbyError: state.lobbyinfo.error,
-        prompt: state.parseinfo
+        prompt: state.promptinfo
     }
 }
 
