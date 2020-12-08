@@ -15,12 +15,14 @@ class Racing extends Component {
             textArrLength: 0,
             currentLine: 0,
 
+            wpm: 0,
             characters: 0,
             seconds: 0,
             started: false,
             finished: false,
             percentage: 0,
-            floorPercentage: 0
+            floorPercentage: 0,
+            players: []
         }
     }
 
@@ -34,7 +36,8 @@ class Racing extends Component {
         }
 
         this.props.socket.on("updateText", ({users}) => {
-            console.log(users);//playername
+            console.log(users);//percentage, placement, playerName
+            //this.setState({players: users})
         })
 
     }
@@ -48,7 +51,7 @@ class Racing extends Component {
         const inputText = e.target.value;
 
         let tempInput = this.state.totalUserInput+inputText
-
+        this.checkIfComplete(tempInput)
         this.setTimer();
         this.setState({curUserInput: inputText, tempUserInput: this.state.totalUserInput+inputText, characters: this.countCorrectCharacters(tempInput)})
     }
@@ -57,12 +60,11 @@ class Racing extends Component {
         const text = this.props.prompt.textString;
         let correctChars = tempInput.split('').filter((s, i) => s === text[i]).length;
 
-
         let percent = Math.floor(((correctChars/this.props.prompt.textArrLength)*100))
-        console.log(Math.floor((correctChars/this.props.prompt.textArrLength)*100) + "\n" + this.state.percentage*100)
+
         if(((correctChars/this.props.prompt.textArrLength)*100) >= this.state.floorPercentage){
             this.setState({floorPercentage: this.state.floorPercentage+1})
-            this.props.socket.emit('letterTyped', {lobbyCode: this.props.lobbyInfo, percentage: this.state.floorPercentage})
+            this.props.socket.emit('letterTyped', {lobbyCode: this.props.lobbyInfo, percentage: this.state.floorPercentage, wpm: this.state.wpm})
         }
 
 
@@ -74,6 +76,7 @@ class Racing extends Component {
         if(!this.state.started){
             this.setState({started: true});
             this.interval = setInterval(() => {
+                this.calculateWPM();
                 this.setState(prevProps => {
                     return {seconds: prevProps.seconds + 1}
                 })
@@ -90,17 +93,24 @@ class Racing extends Component {
                 this.setState({currentLine: this.state.currentLine + 1})
             }
         }
-        this.checkIfComplete(totalInput);
         console.log("Completed");
     }
 
     checkIfComplete(totalInput){
         console.log("TOTAL: ", totalInput)
-        if(totalInput === this.state.textString) {
+        console.log(this.props.prompt.textString)
+        console.log(totalInput === this.props.prompt.textString)
+        if(totalInput === this.props.prompt.textString) {
             console.log("Done")
             document.getElementById("textArea").disabled = true;
             clearInterval(this.interval);
             this.setState({finished: true});
+        }
+    }
+
+    calculateWPM(){
+        if(this.state.characters !== 0 && this.state.seconds !== 0){
+            this.setState({wpm: (this.state.characters/5) / (this.state.seconds/60)})
         }
     }
 
@@ -132,11 +142,15 @@ class Racing extends Component {
 
                 <div>{this.state.seconds}s</div>
 
-                <Speed seconds={this.state.seconds} characters={this.state.characters}/>
+                <div>{Math.round(this.state.wpm)} WPM</div>
                 
                 <div>
                     {Math.floor(this.state.percentage*100)}%
                 </div>
+
+                <br></br>
+
+                {/* <div>{this.state.players !== undefined?(this.state.players[0].percentage?(this.state.players[0].percentage):('')):('')}</div> */}
 
                 <p><Link to ="/">Back to User Creation</Link></p>
                 <p><Link to ="/lobby/:lobbyid">Back to Lobby</Link></p>
