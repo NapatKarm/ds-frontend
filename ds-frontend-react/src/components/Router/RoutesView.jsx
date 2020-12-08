@@ -10,7 +10,7 @@ import socket from '../socket';
 import UserCreation from '../Pages/UserCreation/UserCreationPage';
 import LobbyJoinCreatePage from '../Pages/LobbyJoinCreate/LobbyJoinCreatePage';
 import LobbyPage from '../Pages/LobbyView/LobbyViewPage';
-import RacePage from '../Pages/RacePage';
+import RacePage from '../Pages/Race/RacePage';
 
 
 class RoutesView extends Component {

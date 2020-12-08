@@ -20,15 +20,20 @@ class Lobby extends Component {
             console.log(playerName," was KICKED")
             if(playerName!==undefined) {
                 if(playerName===this.props.tempuser) {
-                    this.props.lobbyLeave();
                     alert("You have been kicked! :(");
+                    this.props.lobbyLeave();
                     this.props.history.push(`/creation`);
                 }
             }
         })
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
             console.log(error, users, "in view page")
-            if(users!==undefined) this.props.lobbyUpdate(users);
+            if(users!==undefined) {
+                this.setState({
+                    lobbyLeader: (users[0].username===this.props.tempuser)
+                })
+                this.props.lobbyUpdate(users);
+            }
             if(error!==undefined) {
                 this.props.lobbyLeave();
                 this.props.history.push("/creation");
