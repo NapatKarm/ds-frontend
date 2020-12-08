@@ -19,7 +19,8 @@ class Racing extends Component {
             seconds: 0,
             started: false,
             finished: false,
-            percentage: 0
+            percentage: 0,
+            floorPercentage: 0
         }
     }
 
@@ -27,18 +28,15 @@ class Racing extends Component {
         if(this.props.prompt !== undefined){
             console.log(this.props.prompt)
 
-            this.setState({textString: this.props.prompt.textString, textArr: this.props.prompt.textArr, textArrLength: this.props.prompt.textArrLength}, () =>{
-                console.log("TextString: ", this.state.textString, this.state.textArr, this.state.textArrLength)
-            })
+            this.setState({textString: this.props.prompt.textString, textArr: this.props.prompt.textArr, textArrLength: this.props.prompt.textArrLength})
 
 
         }
 
-
-
-        this.props.socket.on("updateText", ({playerName, percentage, placement}) => {
-
+        this.props.socket.on("updateText", ({users}) => {
+            console.log(users);//playername
         })
+
     }
 
     componentWillReceiveProps(nextProps) {
@@ -56,13 +54,17 @@ class Racing extends Component {
     }
 
     countCorrectCharacters(tempInput){
-        const text = this.props.prompt.textString.replace(/\s+/g, '');
-        let correctChars = tempInput.replace(/\s+/g, '').split('').filter((s, i) => s === text[i]).length;
+        const text = this.props.prompt.textString;
+        let correctChars = tempInput.split('').filter((s, i) => s === text[i]).length;
 
-        if(correctChars/this.state.textArrLength > this.state.percentage)
-            this.props.socket.emit('letterTyped', {lobbyCode: this.props.lobbyInfo, percentage: this.state.percentage})
-        console.log(this.props.lobbyInfo)
-        console.log(this.state.correctInput)
+
+        let percent = Math.floor(((correctChars/this.props.prompt.textArrLength)*100))
+        console.log(Math.floor((correctChars/this.props.prompt.textArrLength)*100) + "\n" + this.state.percentage*100)
+        if(((correctChars/this.props.prompt.textArrLength)*100) >= this.state.floorPercentage){
+            this.setState({floorPercentage: this.state.floorPercentage+1})
+            this.props.socket.emit('letterTyped', {lobbyCode: this.props.lobbyInfo, percentage: this.state.floorPercentage})
+        }
+
 
         this.setState({percentage: correctChars/this.props.prompt.textArrLength})
         return correctChars;
@@ -114,7 +116,7 @@ class Racing extends Component {
                             if (i < this.state.curUserInput.length){
                                 color = s === this.state.curUserInput[i] ? '#00FF00' : '#FF0000';
                             }
-                            return <span key={i} style={{color: color}}>{s}</span>
+                            return <span key={i} style={{backgroundColor: color}}>{s}</span>
                         })):('')
                     }
                 </div>
@@ -133,7 +135,7 @@ class Racing extends Component {
                 <Speed seconds={this.state.seconds} characters={this.state.characters}/>
                 
                 <div>
-                    {Math.round(this.state.percentage*100)}%
+                    {Math.floor(this.state.percentage*100)}%
                 </div>
 
                 <p><Link to ="/">Back to User Creation</Link></p>
