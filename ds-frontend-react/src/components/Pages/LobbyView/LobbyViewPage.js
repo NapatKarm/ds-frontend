@@ -16,6 +16,16 @@ class Lobby extends Component {
         }
     }
     componentDidMount() {
+        this.props.socket.on('kicked', ({playerName}) => {
+            console.log(playerName," was KICKED")
+            if(playerName!==undefined) {
+                if(playerName===this.props.tempuser) {
+                    this.props.lobbyLeave();
+                    alert("You have been kicked! :(");
+                    this.props.history.push(`/creation`);
+                }
+            }
+        })
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
             console.log(error, users, "in view page")
             if(users!==undefined) this.props.lobbyUpdate(users);
@@ -61,7 +71,7 @@ class Lobby extends Component {
         }
         if(startCondition){
             this.props.socket.emit('startGame', {lobbyCode: this.state.lobbyName})
-            this.props.history.push(`/lobby/${this.state.lobbyName}/racing`)
+           
         } 
         else {
             console.log("Not everyone is ready should run")

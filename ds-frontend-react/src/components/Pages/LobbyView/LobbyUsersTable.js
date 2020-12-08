@@ -18,7 +18,7 @@ class UsersTable extends Component {
         console.log(this.props.users,this.props.tempuser,"Mounted info table")
     }
     kickPlayer = (thisUser) => {
-        console.log()
+        console.log("Kicking Player",thisUser,this.props.lobbyName)
         this.props.socket.emit('kickPlayer', {lobbyCode: this.props.lobbyName, playerName: thisUser})
     }
     render() {
@@ -44,7 +44,7 @@ class UsersTable extends Component {
                             </TableCell>
                             <TableCell align="center">{user.ready ? <CheckCircleIcon style={{ color: green[500]}} fontSize="small"/> : <CancelIcon style={{ color: red[500]}} fontSize="small"/>}</TableCell>
                     <TableCell align="center">
-                    {(user.username === this.props.tempuser && !this.props.lobbyLeader) ? "" : <Button onClick={()=>this.kickPlayer(user.username)}>Kick</Button>}
+                    {(user.username === this.props.tempuser || !this.props.lobbyLeader) ? "" : <Button onClick={()=>this.kickPlayer(user.username)}>Kick</Button>}
                     </TableCell>
                         </TableRow>
                     ))):(
