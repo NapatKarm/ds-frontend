@@ -4,8 +4,7 @@ import UsersTable from './LobbyUsersTable'
 import './LobbyViewPage.css';
 import Button from '@material-ui/core/Button';
 import { green } from '@material-ui/core/colors';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 class Lobby extends Component {
     constructor(props) {
@@ -15,26 +14,22 @@ class Lobby extends Component {
             lobbyName: "",
             lobbyUsers: [],
             loading: true,
-            endPlacements: [],
-            ending: false
+
         }
     }
     componentDidMount() {
-        this.props.socket.on("updateText", ({ users }) => {
-            if(users!==undefined) this.setState({endPlacements:users,ending:(users[0].placement!==undefined)})
-        })
         this.props.socket.on('kicked', ({ playerName }) => {
             console.log(playerName, " was KICKED")
             if (playerName !== undefined) {
                 if (playerName === this.props.tempuser) {
                     alert("You have been kicked! :(");
                     this.props.lobbyLeave();
+                    this.props.resetPrompt();
                     this.props.history.push(`/creation`);
                 }
             }
         })
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
-            console.log(error, users, "in view page")
             if (users !== undefined) {
                 this.setState({
                     lobbyLeader: (users[0].username === this.props.tempuser)
@@ -47,7 +42,6 @@ class Lobby extends Component {
             }
         })
         this.props.socket.on('raceInit', ({ prompt, error }) => {
-            console.log(prompt, error, "straight from raceInit");
             if (prompt !== undefined) {
                 this.props.parsePrompt(prompt);
                 this.props.history.push(`/lobby/${this.state.lobbyName}/racing`);
@@ -72,7 +66,6 @@ class Lobby extends Component {
         this.props.history.push("/creation");
     }
     toggleReady = () => {
-        console.log("ughhh",this.state.endPlacements)
         this.props.socket.emit('toggleReady', { lobbyCode: this.props.lobbyInfo })
     }
     startGameCheck = () => {
@@ -88,7 +81,6 @@ class Lobby extends Component {
 
         }
         else {
-            console.log("Not everyone is ready should run")
             alert("Not all players are ready!")
         }
     }
@@ -96,7 +88,6 @@ class Lobby extends Component {
         this.setState({ending:false});
       };
     render() {
-        console.log("Passing into table", this.state.lobbyUsers)
         return (
             <div className="viewPageV">
                 <div className="wrapBoxBGV">
@@ -135,9 +126,6 @@ class Lobby extends Component {
                         </div>
                     </div>
                 </div>
-                <Backdrop  open={this.state.ending} onClick={()=>this.handleClose}>
-                    <CircularProgress color="inherit" />
-                </Backdrop>
             </div>
         )
     }

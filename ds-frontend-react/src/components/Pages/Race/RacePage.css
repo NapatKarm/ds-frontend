@@ -14,6 +14,9 @@
     margin-right: 5%;
     
 }
+.whiteText{
+    color: white !important;
+}
 .itemsListed {
     color:rgba(255, 255, 255, 0.527) !important;
 }

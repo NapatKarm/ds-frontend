@@ -2,17 +2,36 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import PlayersList from './PlayersList'
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { createMuiTheme, MuiThemeProvider, ThemeProvider } from '@material-ui/core/styles';
 import './RacePage.css'
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
+import Button from '@material-ui/core/Button';
+
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 const theme = createMuiTheme({
     palette: {
-       secondary: {
-           main: '#69d5e4'
-       }
+        secondary: {
+            main: '#009ab0'
+        }
     }
-  })
+})
 
+const colButton = createMuiTheme({
+    palette: {
+        primary: {
+            main: "#FFFFFF"
+        }
+    },
+});
 
 class Racing extends Component {
     constructor(props) {
@@ -21,12 +40,10 @@ class Racing extends Component {
             totalUserInput: '',
             tempUesrInput: '',
             curUserInput: '',
-
             textString: '',
             textArr: ["place holder"],
             textArrLength: 0,
             currentLine: 0,
-
             wpm: 0,
             characters: 0,
             seconds: 0,
@@ -34,7 +51,8 @@ class Racing extends Component {
             finished: false,
             percentage: 0,
             floorPercentage: 0,
-            players: []
+            players: [],
+            ending: false
         }
     }
 
@@ -42,16 +60,20 @@ class Racing extends Component {
         if (this.props.prompt !== undefined) {
             this.setState({ textString: this.props.prompt.textString, textArr: this.props.prompt.textArr, textArrLength: this.props.prompt.textArrLength })
         }
-
         this.props.socket.on("updateText", ({ users }) => {
-            console.log(users, "Data from updateText");
             this.setState({players:users})
+        })
+        this.props.socket.on("lobbyUpdate", ({ error, users }) => {
+            this.setState({ending:true})
+            
         })
 
     }
+    componentWillReceiveProps(props) {
+        console.log("Updating Information...")
+    }
     onUserInputChange = (e) => {
         const inputText = e.target.value;
-
         let tempInput = this.state.totalUserInput + inputText
         this.checkIfComplete(tempInput)
         this.setTimer();
@@ -62,13 +84,15 @@ class Racing extends Component {
         const text = this.props.prompt.textString;
         let correctChars = tempInput.split('').filter((s, i) => s === text[i]).length;
         if (((correctChars / this.props.prompt.textArrLength) * 100) >= this.state.floorPercentage) {
-            this.setState({ floorPercentage: Math.floor((correctChars / this.props.prompt.textArrLength) * 100)},
+            this.setState({ floorPercentage: Math.floor((correctChars / this.props.prompt.textArrLength) * 100) },
                 (() => {
-                if (this.state.floorPercentage === 100) {
-                    this.props.socket.emit('letterTyped', { lobbyCode: this.props.lobbyInfo, percentage: this.state.floorPercentage, wpm: this.state.wpm })
-                }}
+                    if (this.state.floorPercentage === 100) {
+                        this.props.socket.emit('letterTyped', { lobbyCode: this.props.lobbyInfo, percentage: this.state.floorPercentage, wpm: this.state.wpm })
+                    }
+                }
                 )
-            )};
+            )
+        };
         this.setState({ percentage: correctChars / this.props.prompt.textArrLength });
         return correctChars;
     };
@@ -98,7 +122,6 @@ class Racing extends Component {
 
     checkIfComplete(totalInput) {
         if (totalInput === this.props.prompt.textString) {
-            console.log("Done")
             document.getElementById("textArea").disabled = true;
             clearInterval(this.interval);
             this.setState({ finished: true });
@@ -111,6 +134,9 @@ class Racing extends Component {
         }
     }
 
+    toLobby = () => {
+        this.props.history.push(`/lobby/${this.props.lobbyInfo}`);
+    }
     render() {
         return (
             <div className="racePage">
@@ -119,88 +145,85 @@ class Racing extends Component {
                         <div className="logoBoxR">
                             <div>Race Progress: </div>
                             <MuiThemeProvider theme={theme}>
-                            <LinearProgress style={{backgroundColor: "#c9c9c9",color:"white"}} className="progressBar" color="secondary" variant="determinate" value={this.state.floorPercentage}/>
+                                <LinearProgress style={{ backgroundColor: "#c9c9c9" }} className="progressBar" color="secondary" variant="determinate" value={this.state.floorPercentage} />
                             </MuiThemeProvider>
                         </div>
                         <div className="bigBoxCreateR">
                             <div className="smallBoxLeftR">
                                 <div className="leftTop">
-                                <div className="leftSmallWPM">
-                                   {Math.round(this.state.wpm)} wpm
+                                    <div className="leftSmallWPM">
+                                        {Math.round(this.state.wpm)} wpm
                                    </div>
-                                <div className="promptSection" style={{ userSelect: "none" }}>
-                                    <div>
-                                       {this.props.prompt.textArr ? (
-                                            this.props.prompt.textArr[this.state.currentLine].split('').map((s, i) => {
-                                                let color;
-                                                if (i < this.state.curUserInput.length) {
-                                                    color = s === this.state.curUserInput[i] ? '#00ba00' : '#ba0000';
-                                                }
-                                                return <span key={i} style={{ backgroundColor: color }}>{s}</span>
-                                            })) : ('')
-                                        }
-                                    </div>
-                                    <div className="nextPrompt">{this.props.prompt.textArr ? (this.props.prompt.textArr[this.state.currentLine + 1]) : ('')}</div>
-                                    <div className="furtherPrompt">{this.props.prompt.textArr ? (this.props.prompt.textArr[this.state.currentLine + 2]) : ('')}</div>
-                                </div>
+                                   
+                                   {this.state.floorPercentage!== 100 ?
+                                   (
+                                    <div className="promptSection" style={{ userSelect: "none" }}>
+                                        <div>
+                                            {this.props.prompt.textArr ? (
+                                                this.props.prompt.textArr[this.state.currentLine].split('').map((s, i) => {
+                                                    let color;
+                                                    if (i < this.state.curUserInput.length) {
+                                                        color = s === this.state.curUserInput[i] ? '#00ba00' : '#ba0000';
+                                                    }
+                                                    return <span key={i} style={{ backgroundColor: color }}>{s}</span>
+                                                })) : ('')
+                                            }
+                                        </div>
+                                        <div className="nextPrompt">{this.props.prompt.textArr ? (this.props.prompt.textArr[this.state.currentLine + 1]) : ('')}</div>
+                                        <div className="furtherPrompt">{this.props.prompt.textArr ? (this.props.prompt.textArr[this.state.currentLine + 2]) : ('')}</div>
+                                        </div>
+                                   )
+                                    :
+                                    (
+                                        <div className="promptSection" style={{ userSelect: "none" }}>Finished!</div>
+                                    )
+                                }
+                                
                                 </div>
                                 <div >
                                     <form className="leftBot" onSubmit={this.handleSubmit}>
-                                        <input className="inputBox"tabindex="-1" id="textArea" onChange={this.onUserInputChange} value={this.state.curUserInput}></input>
+                                        <input className="inputBox" tabindex="-1" id="textArea" onChange={this.onUserInputChange} value={this.state.curUserInput}></input>
                                     </form>
                                 </div>
                             </div>
                             <div className="smallBoxRightR">
-                                <PlayersList players={this.state.players}/>
+                                <PlayersList players={this.state.players} />
                             </div>
                         </div>
                     </div>
                 </div>
+                <Dialog
+                    open={this.state.ending}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    // onClose={}
+                    fullWidth={true}
+                    maxWidth="sm"
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                    PaperProps={{
+                        style: {
+                          backgroundColor: '#424242',
+                          color: 'white'
+                        },
+                      }}
+                >
+                    <DialogTitle id="alert-dialog-slide-title">{"Placements!"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-slide-description">
+                        <PlayersList players={this.state.players} />
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                    <ThemeProvider theme={colButton}>
+                        <Button className="colButtonDSV" variant="contained" disableElevation onClick={this.toLobby}>
+                            To Lobby
+                    </Button>
+                    </ThemeProvider>
+                    </DialogActions>
+                </Dialog>
             </div>
         )
     }
 }
-// return (
-//     <div>
-//         <h1>Vroom vroom racing</h1>
-
-//         <div>
-//             {this.props.prompt.textArr?(
-//                 this.props.prompt.textArr[this.state.currentLine].split('').map((s,i) => {
-//                     let color;
-//                     if (i < this.state.curUserInput.length){
-//                         color = s === this.state.curUserInput[i] ? '#00FF00' : '#FF0000';
-//                     }
-//                     return <span key={i} style={{backgroundColor: color}}>{s}</span>
-//                 })):('')
-//             }
-//         </div>
-
-//         <div>{this.props.prompt.textArr?(this.props.prompt.textArr[this.state.currentLine+1]):('')}</div>
-//         <div>{this.props.prompt.textArr?(this.props.prompt.textArr[this.state.currentLine+2]):('')}</div>
-
-//         <br></br>
-
-//         <form onSubmit={this.handleSubmit}>
-//             <input tabindex="-1" id="textArea" onChange={this.onUserInputChange} value={this.state.curUserInput}></input>
-//         </form>
-
-//         <div>{this.state.seconds}s</div>
-
-//         <div>{Math.round(this.state.wpm)} WPM</div>
-
-//         <div>
-//             {Math.floor(this.state.percentage*100)}%
-//         </div>
-
-//         <br></br>
-
-//         {/* <div>{this.state.players !== undefined?(this.state.players[0].percentage?(this.state.players[0].percentage):('')):('')}</div> */}
-
-//         <p><Link to ="/">Back to User Creation</Link></p>
-//         <p><Link to ="/lobby/:lobbyid">Back to Lobby</Link></p>
-//     </div>
-// )
-// }
-// }
 export default withRouter(Racing)
