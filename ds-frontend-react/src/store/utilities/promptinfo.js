@@ -1,6 +1,7 @@
 
 // Action Types
 const PARSE_PROMPT = "PARSE_PROMPT"
+const RESET_PROMPT = "RESET_PROMPT"
 
 // Action Creator
 const parsePrompt = (textString, textArr, textArrLength) => {
@@ -13,7 +14,12 @@ const parsePrompt = (textString, textArr, textArrLength) => {
         }
     }
 }
-
+const resetPrompt = () => {
+    return {
+        type: RESET_PROMPT,
+        payload: {}
+    }
+}
 
 // Thunks
 export const parsePromptThunk = (prompt) => (dispatch) => {
@@ -32,9 +38,15 @@ export const parsePromptThunk = (prompt) => (dispatch) => {
     dispatch(parsePrompt(textString, textArr, textArrLength));
 }
 
+export const resetPromptThunk = () => (dispatch) => {
+    dispatch(resetPrompt());
+}
+
 export default (state = {}, action) => {
     switch (action.type) {
         case PARSE_PROMPT:
+            return action.payload;
+        case RESET_PROMPT:
             return action.payload;
         default:
             return state;

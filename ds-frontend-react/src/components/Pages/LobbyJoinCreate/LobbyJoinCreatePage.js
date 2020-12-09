@@ -39,8 +39,11 @@ class LobbyJoinCreatePage extends Component {
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
             if(error!==undefined) this.setState({joinError:error});
             if(users!==undefined) {
-                this.props.lobbyUpdate(users)
-                this.props.history.push(`/lobby/${users[0].lobbyCode}`);
+                if(this.props.lobbyInfo===undefined)
+                {
+                    this.props.lobbyUpdate(users)
+                    this.props.history.push(`/lobby/${users[0].lobbyCode}`);
+                }
             }
         })
         if (typeof this.props.tempuser === 'string') {
@@ -50,11 +53,11 @@ class LobbyJoinCreatePage extends Component {
             this.props.history.push("/")
         }
     }
-    componentDidUpdate() {
-        if (this.props.lobbyInfo !== undefined) {
-            this.props.history.push(`/lobby/${this.props.lobbyInfo}`);
-        }
-    }
+    // componentDidUpdate() {
+    //     if (this.props.lobbyInfo !== undefined) {
+    //         this.props.history.push(`/lobby/${this.props.lobbyInfo}`);
+    //     }
+    // }
     changeUser = () => {
         this.props.userChange(this.state.name);
         this.props.history.push("/");
@@ -75,12 +78,16 @@ class LobbyJoinCreatePage extends Component {
 
     createLobby = () => {
         // this.props.lobbyCreate(this.props.tempuser);
+        
         this.props.socket.emit('createLobby', { username: this.props.tempuser })
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
             if(error!==undefined) this.setState({joinError:error});
             if(users!==undefined) {
-                this.props.lobbyUpdate(users)
-                this.props.history.push(`/lobby/${users[0].lobbyCode}`);
+                if(this.props.lobbyInfo===undefined) {
+                    console.log("THIS ONE RUNNING HOMIE CREATELOBBY")
+                    this.props.lobbyUpdate(users)
+                    this.props.history.push(`/lobby/${users[0].lobbyCode}`);
+                }
             }
         })
     }
@@ -102,12 +109,16 @@ class LobbyJoinCreatePage extends Component {
                     <div className="wrapBox">
                         <div className="logoBox">
                             <img className="logoCreate" src={reCodeLogo} alt="Logo" />
-                            <div>USER: {this.state.name}</div>
+                            <div>USER# [ {this.state.name} ]</div>
                         </div>
                         <div className="bigBoxCreate">
                             <div className="smallBoxLeft">
-                                <h1 className="headingTitle">CHALLENGE AND<br />CONQUER</h1>
-                                <p className="botTextL">Buncha text oh lol someone who want eat chicken sometimes <br />I want some chipotle too but you know sometimes corona yeah <br />lol it be like that sometimes.</p>
+                                <h1 className="headingTitle">Cod·ing<br /></h1>
+                                <h2 className="semiHeading">/ˈkōdiNG/</h2>
+                                <p className="botTextL">
+                                    1. the process of assigning a code to something for classification or identification.
+                                    <br/><br/>
+                                    2. the process or activity of writing computer programs.</p>
 
                             </div>
                             <div className="smallBoxRight">

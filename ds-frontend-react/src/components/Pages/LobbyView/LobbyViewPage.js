@@ -4,8 +4,7 @@ import UsersTable from './LobbyUsersTable'
 import './LobbyViewPage.css';
 import Button from '@material-ui/core/Button';
 import { green } from '@material-ui/core/colors';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
+
 
 class Lobby extends Component {
     constructor(props) {
@@ -15,20 +14,17 @@ class Lobby extends Component {
             lobbyName: "",
             lobbyUsers: [],
             loading: true,
-            endPlacements: [],
-            ending: false
+
         }
     }
     componentDidMount() {
-        this.props.socket.on("updateText", ({ users }) => {
-            if(users!==undefined) this.setState({endPlacements:users,ending:(users[0].placement!==undefined)})
-        })
         this.props.socket.on('kicked', ({ playerName }) => {
             console.log(playerName, " was KICKED")
             if (playerName !== undefined) {
                 if (playerName === this.props.tempuser) {
                     alert("You have been kicked! :(");
                     this.props.lobbyLeave();
+                    this.props.resetPrompt();
                     this.props.history.push(`/creation`);
                 }
             }
@@ -135,9 +131,6 @@ class Lobby extends Component {
                         </div>
                     </div>
                 </div>
-                <Backdrop  open={this.state.ending} onClick={()=>this.handleClose}>
-                    <CircularProgress color="inherit" />
-                </Backdrop>
             </div>
         )
     }

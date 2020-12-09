@@ -18,6 +18,13 @@
     margin-right: 5%;
     
 }
+.semiHeading{
+    color: rgba(255, 255, 255, 0.877);
+    margin-top: 0px;
+    margin-bottom: 1%;
+    font-size: 30px;
+    text-shadow: 2px 2px #007286;
+}
 .logoCreate{
     width: 150px;
     margin-bottom: 10px;

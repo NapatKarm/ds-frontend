@@ -39,9 +39,9 @@ function CircularProgressWithLabel(props) {
             >
                 {props.placement ? 
                 (
-                <Typography variant="caption" component="div" color="white">{`#${props.placement}`}</Typography>
+                <Typography variant="caption" component="div" className="whiteText">{`#${props.placement}`}</Typography>
                 ):(
-                    <Typography variant="caption" component="div" color="white">{`${Math.floor(
+                    <Typography variant="caption" component="div" className="whiteText">{`${Math.floor(
                         props.value,
                     )}%`}</Typography>
                 )
@@ -65,7 +65,7 @@ class PlayersList extends Component {
                                     <CircularProgressWithLabel value={player.percentage} placement={player.placement} />
                                 </ListItemAvatar>
                                 <ListItemText
-                                    primary={player.playerName}
+                                    primary={<div className="whiteText">{player.playerName}</div>}
                                     secondary={<div className="itemsListed">{Math.floor(player.wpm)+" WPM"}</div>}
                                 />
                             </ListItem>
