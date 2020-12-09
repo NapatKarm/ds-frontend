@@ -4,6 +4,8 @@ import UsersTable from './LobbyUsersTable'
 import './LobbyViewPage.css';
 import Button from '@material-ui/core/Button';
 import { green } from '@material-ui/core/colors';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 class Lobby extends Component {
     constructor(props) {
@@ -12,14 +14,19 @@ class Lobby extends Component {
             lobbyLeader: false,
             lobbyName: "",
             lobbyUsers: [],
-            loading: true
+            loading: true,
+            endPlacements: [],
+            ending: false
         }
     }
     componentDidMount() {
-        this.props.socket.on('kicked', ({playerName}) => {
-            console.log(playerName," was KICKED")
-            if(playerName!==undefined) {
-                if(playerName===this.props.tempuser) {
+        this.props.socket.on("updateText", ({ users }) => {
+            if(users!==undefined) this.setState({endPlacements:users,ending:(users[0].placement!==undefined)})
+        })
+        this.props.socket.on('kicked', ({ playerName }) => {
+            console.log(playerName, " was KICKED")
+            if (playerName !== undefined) {
+                if (playerName === this.props.tempuser) {
                     alert("You have been kicked! :(");
                     this.props.lobbyLeave();
                     this.props.history.push(`/creation`);
@@ -28,20 +35,20 @@ class Lobby extends Component {
         })
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
             console.log(error, users, "in view page")
-            if(users!==undefined) {
+            if (users !== undefined) {
                 this.setState({
-                    lobbyLeader: (users[0].username===this.props.tempuser)
+                    lobbyLeader: (users[0].username === this.props.tempuser)
                 })
                 this.props.lobbyUpdate(users);
             }
-            if(error!==undefined) {
+            if (error !== undefined) {
                 this.props.lobbyLeave();
                 this.props.history.push("/creation");
             }
         })
-        this.props.socket.on('raceInit', ({prompt, error}) => {
+        this.props.socket.on('raceInit', ({ prompt, error }) => {
             console.log(prompt, error, "straight from raceInit");
-            if(prompt!==undefined) {
+            if (prompt !== undefined) {
                 this.props.parsePrompt(prompt);
                 this.props.history.push(`/lobby/${this.state.lobbyName}/racing`);
             }
@@ -50,12 +57,14 @@ class Lobby extends Component {
             lobbyName: this.props.lobbyInfo,
             lobbyUsers: this.props.lobbyUsers,
             loading: false
-        }, () => {if(this.state.lobbyUsers.length>0){
-            this.setState({
-                lobbyLeader: (this.state.lobbyUsers[0].username===this.props.tempuser)
-            })
-        }})
-        
+        }, () => {
+            if (this.state.lobbyUsers.length > 0) {
+                this.setState({
+                    lobbyLeader: (this.state.lobbyUsers[0].username === this.props.tempuser)
+                })
+            }
+        })
+
     }
     leavingLobby = () => {
         this.props.socket.emit('leaveLobby', { lobbyCode: this.props.lobbyInfo });
@@ -63,27 +72,29 @@ class Lobby extends Component {
         this.props.history.push("/creation");
     }
     toggleReady = () => {
+        console.log("ughhh",this.state.endPlacements)
         this.props.socket.emit('toggleReady', { lobbyCode: this.props.lobbyInfo })
     }
     startGameCheck = () => {
-        let startCondition= true;
-        for(let i = 0; i < this.props.lobbyUsers.length;i++)
-        {
-            if(this.props.lobbyUsers[i].ready===false) {
-                startCondition=false;
+        let startCondition = true;
+        for (let i = 0; i < this.props.lobbyUsers.length; i++) {
+            if (this.props.lobbyUsers[i].ready === false) {
+                startCondition = false;
                 break;
             }
         }
-        if(startCondition){
-            this.props.socket.emit('startGame', {lobbyCode: this.state.lobbyName})
-           
-        } 
+        if (startCondition) {
+            this.props.socket.emit('startGame', { lobbyCode: this.state.lobbyName })
+
+        }
         else {
             console.log("Not everyone is ready should run")
             alert("Not all players are ready!")
         }
     }
-
+    handleClose = () => {
+        this.setState({ending:false});
+      };
     render() {
         console.log("Passing into table", this.state.lobbyUsers)
         return (
@@ -104,7 +115,7 @@ class Lobby extends Component {
                                         Start Game
                                     </Button>
                                     :
-                                    <Button className="colButtonDSVDD" variant="contained"  disableElevation disabled>
+                                    <Button className="colButtonDSVDD" variant="contained" disableElevation disabled>
                                         Start Game
                                     </Button>
                                 }
@@ -119,11 +130,14 @@ class Lobby extends Component {
 
                             </div>
                             <div className="smallBoxRightV">
-                                <UsersTable lobbyName={this.props.lobbyInfo} tempuser={this.props.tempuser} users={this.props.lobbyUsers} socket={this.props.socket} lobbyLeader={this.state.lobbyLeader}/>
+                                <UsersTable lobbyName={this.props.lobbyInfo} tempuser={this.props.tempuser} users={this.props.lobbyUsers} socket={this.props.socket} lobbyLeader={this.state.lobbyLeader} />
                             </div>
                         </div>
                     </div>
                 </div>
+                <Backdrop  open={this.state.ending} onClick={()=>this.handleClose}>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
             </div>
         )
     }

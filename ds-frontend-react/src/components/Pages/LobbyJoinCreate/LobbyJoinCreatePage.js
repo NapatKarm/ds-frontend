@@ -31,7 +31,7 @@ class LobbyJoinCreatePage extends Component {
             name: '',
             openBool: false,
             lobbyIDChoice: "",
-            joinError: ""
+            joinError: "",
         }
     }
 
