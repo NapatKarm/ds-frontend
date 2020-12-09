@@ -70,6 +70,9 @@ class LobbyJoinCreatePage extends Component {
         if (this.state.lobbyIDChoice.length === 6) {
             this.props.socket.emit('joinLobby', { lobbyCode: this.state.lobbyIDChoice, username: this.props.tempuser })
             document.getElementById('lobbyIDInput').value = '';
+            if(this.props.lobbyInfo!=undefined) {
+                this.props.history.push(`/lobby/${this.props.lobbyInfo}`)
+            }
         }
         else this.setState({ joinError: "Lobby ID must be 6 digits." })
 
@@ -77,7 +80,6 @@ class LobbyJoinCreatePage extends Component {
 
     createLobby = () => {
         // this.props.lobbyCreate(this.props.tempuser);
-        
         this.props.socket.emit('createLobby', { username: this.props.tempuser })
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
             if(error!==undefined) this.setState({joinError:error});
