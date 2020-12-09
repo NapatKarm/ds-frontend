@@ -1,0 +1,132 @@
+.racePage {
+    background-color: #1b1c1e;
+    font-size: calc(10px + 2vmin);
+    color: white;
+    height: 100vh;
+    flex-direction: column;
+    background-image: url('../../../images/ReCodeBG4.jpg') ;
+    background-position: center;
+    background-repeat: repeat;
+    background-size: contain;
+}
+.wrapBoxR {
+    margin-left: 5%;
+    margin-right: 5%;
+    
+}
+.itemsListed {
+    color:rgba(255, 255, 255, 0.527) !important;
+}
+.progressBar{
+    width: 75%;
+    justify-self: center;
+    text-align: center;
+    padding: 5px;
+}
+.bigBoxCreateR{
+    flex-direction: row;
+    display: flex;
+    justify-content: space-between;
+    height: 450px;
+    
+}
+.logoBoxR {
+    margin-top: 6%;
+    border-bottom: 2px solid #2d2e32;
+    margin-bottom: 2%;
+    display: flex;
+    justify-content: space-evenly;
+    font-weight: bold;
+    text-shadow: 2px 2px 2px  #000000;
+    align-items: baseline;
+    height: 50px;
+}
+.wrapBoxBGR {
+    margin-top: 15vh;
+    margin-right: 15%;
+    background-color: #25262a;
+    height: 70%;
+    transition: 0.3s;
+    box-shadow: 6px 6px#ff0000be, -6px -6px #08f3ffbe !important;
+}
+.smallBoxLeftR {
+    background-color: #333333;
+    border-top-left-radius: 30px;
+    width: 75%;
+}
+.leftTop {
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    height: 45%;
+    margin-bottom: 3%;
+    margin-top: 3%;
+}
+.smallBoxRightR {
+    border-top-right-radius: 30px;
+    flex-direction: column;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 20%;
+    background-color:  #333333;
+}
+.leftSmallWPM {
+    width: 20%;
+    text-align: center;
+    align-items: center;
+    border-right-width: 3px;
+    border-right-style: solid;
+}
+.promptSection {
+    font-family: Arial,serif;
+    text-align: center;
+    width: 70%;
+    padding: 3%;
+    font-size: 22px;
+}
+.nextPrompt{
+    margin-top:1%;
+    font-size: 18px;
+    color: #ffffffa8;
+}
+.furtherPrompt{
+    margin-top:1%;
+    font-size: 14px;
+    color: #ffffff63;
+}
+.headingTitleR {
+    margin:0;
+    text-shadow: 3px 3px #ff0000;
+}
+.botTextLR {
+    
+    font-size: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #787985;
+}
+.colButtonDSR {
+    width: 60%;
+    font-weight: bold !important;
+    border-radius: 0px !important;
+    transition: 0.3s;
+}
+.colButtonDSR:hover {
+    background-color: white !important;
+    box-shadow: 6px 6px #ff0000, -6px -6px #08f3ff !important;
+}
+.dialogBoxR {
+    border-radius: 0px !important;
+    box-shadow: 6px 6px #ff0000, -6px -6px #08f3ff !important;
+}
+.inputBox{
+    background-color: rgb(224, 224, 224);
+    width: 90%;
+    height: 100px;
+    font-size: 30px;
+}
+.leftBot{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
