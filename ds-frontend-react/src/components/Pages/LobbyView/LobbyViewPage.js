@@ -34,7 +34,10 @@ class Lobby extends Component {
                 this.setState({
                     lobbyLeader: (users[0].username === this.props.tempuser)
                 })
-                this.props.lobbyUpdate(users);
+                if(this.props.history.location.pathname!="/creation")
+                {
+                    this.props.lobbyUpdate(users);
+                }
             }
             if (error !== undefined) {
                 this.props.lobbyLeave();

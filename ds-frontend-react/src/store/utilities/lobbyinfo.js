@@ -1,4 +1,3 @@
-import socket from '../../components/socket'; 
 
 // Action Types
 const LOBBY_UPDATE = "LOBBY_UPDATE";
