@@ -26,15 +26,10 @@ export const parsePromptThunk = (prompt) => (dispatch) => {
     let textString = ''
     let textArr= []
     let textArrLength = 0
-
     let replacedPrompt = prompt.replaceAll('|', '')
-
     textString = replacedPrompt
     textArr = prompt.split('|')
     textArrLength = replacedPrompt.length
-
-    console.log(prompt.replaceAll('|', ''), "\n", prompt.split('|'))
-
     dispatch(parsePrompt(textString, textArr, textArrLength));
 }
 

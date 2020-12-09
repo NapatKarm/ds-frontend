@@ -30,7 +30,6 @@ class Lobby extends Component {
             }
         })
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
-            console.log(error, users, "in view page")
             if (users !== undefined) {
                 this.setState({
                     lobbyLeader: (users[0].username === this.props.tempuser)
@@ -43,7 +42,6 @@ class Lobby extends Component {
             }
         })
         this.props.socket.on('raceInit', ({ prompt, error }) => {
-            console.log(prompt, error, "straight from raceInit");
             if (prompt !== undefined) {
                 this.props.parsePrompt(prompt);
                 this.props.history.push(`/lobby/${this.state.lobbyName}/racing`);
@@ -68,7 +66,6 @@ class Lobby extends Component {
         this.props.history.push("/creation");
     }
     toggleReady = () => {
-        console.log("ughhh",this.state.endPlacements)
         this.props.socket.emit('toggleReady', { lobbyCode: this.props.lobbyInfo })
     }
     startGameCheck = () => {
@@ -84,7 +81,6 @@ class Lobby extends Component {
 
         }
         else {
-            console.log("Not everyone is ready should run")
             alert("Not all players are ready!")
         }
     }
@@ -92,7 +88,6 @@ class Lobby extends Component {
         this.setState({ending:false});
       };
     render() {
-        console.log("Passing into table", this.state.lobbyUsers)
         return (
             <div className="viewPageV">
                 <div className="wrapBoxBGV">

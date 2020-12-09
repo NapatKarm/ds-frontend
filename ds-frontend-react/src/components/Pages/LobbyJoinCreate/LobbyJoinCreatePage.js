@@ -67,7 +67,6 @@ class LobbyJoinCreatePage extends Component {
     }
     joinLobby = (event) => {
         event.preventDefault()
-        console.log("Implementation Underway", this.state.lobbyIDChoice);
         if (this.state.lobbyIDChoice.length === 6) {
             this.props.socket.emit('joinLobby', { lobbyCode: this.state.lobbyIDChoice, username: this.props.tempuser })
             document.getElementById('lobbyIDInput').value = '';
@@ -84,7 +83,6 @@ class LobbyJoinCreatePage extends Component {
             if(error!==undefined) this.setState({joinError:error});
             if(users!==undefined) {
                 if(this.props.lobbyInfo===undefined) {
-                    console.log("THIS ONE RUNNING HOMIE CREATELOBBY")
                     this.props.lobbyUpdate(users)
                     this.props.history.push(`/lobby/${users[0].lobbyCode}`);
                 }

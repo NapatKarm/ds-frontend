@@ -61,18 +61,16 @@ class Racing extends Component {
             this.setState({ textString: this.props.prompt.textString, textArr: this.props.prompt.textArr, textArrLength: this.props.prompt.textArrLength })
         }
         this.props.socket.on("updateText", ({ users }) => {
-            console.log(users, "Data from updateText");
             this.setState({players:users})
         })
         this.props.socket.on("lobbyUpdate", ({ error, users }) => {
-            console.log(error, users, "in RACE PAGE");
             this.setState({ending:true})
             
         })
 
     }
     componentWillReceiveProps(props) {
-        console.log(props, "Incoming props")
+        console.log("Updating Information...")
     }
     onUserInputChange = (e) => {
         const inputText = e.target.value;
@@ -124,7 +122,6 @@ class Racing extends Component {
 
     checkIfComplete(totalInput) {
         if (totalInput === this.props.prompt.textString) {
-            console.log("Done")
             document.getElementById("textArea").disabled = true;
             clearInterval(this.interval);
             this.setState({ finished: true });

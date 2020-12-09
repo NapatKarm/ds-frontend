@@ -15,10 +15,8 @@ import { green,red,cyan } from '@material-ui/core/colors';
 
 class UsersTable extends Component {
     componentDidMount(){
-        console.log(this.props.users,this.props.tempuser,"Mounted info table")
     }
     kickPlayer = (thisUser) => {
-        console.log("Kicking Player",thisUser,this.props.lobbyName)
         this.props.socket.emit('kickPlayer', {lobbyCode: this.props.lobbyName, playerName: thisUser})
     }
     render() {
