@@ -37,33 +37,26 @@ class Racing extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            totalUserInput: '',
-            tempUesrInput: '',
-            curUserInput: '',
-            textString: '',
-            textArr: ["place holder"],
-            textArrLength: 0,
-            currentLine: 0,
-            wpm: 0,
-            characters: 0,
-            seconds: 0,
-            started: false,
-            finished: false,
-            percentage: 0,
-            floorPercentage: 0,
-            players: [],
-            ending: false
+            totalUserInput: '',                     //Main comparator to determine if the entire prompt has been typed
+            tempUesrInput: '',                      //Total string plus total line string 
+            curUserInput: '',                       //Current Line String
+            currentLine: 0,                         //Current line number for the text Array
+            wpm: 0,                                 //Words per minute
+            characters: 0,                          //Correct number of characters
+            seconds: 0,                             //Seconds passed, incremented by timer
+            started: false,                         //Boolean for when the user begins typing
+            finished: false,                        //Boolean for when the user finishes typing                          
+            floorPercentage: 0,                     //Calculate Floor percentage 
+            players: [],                            //Stores all player information (name, percentage, placement) received from socket
+            ending: false                           //Boolean for when all users finish
         }
     }
 
     componentDidMount() {
-        if (this.props.prompt !== undefined) {
-            this.setState({ textString: this.props.prompt.textString, textArr: this.props.prompt.textArr, textArrLength: this.props.prompt.textArrLength })
-        }
-        this.props.socket.on("updateText", ({ users }) => {
+        this.props.socket.on("updateText", ({ users }) => {                 //Returns information (name, percentage, placement) of players in lobby
             this.setState({players:users})
         })
-        this.props.socket.on("lobbyUpdate", ({ error, users }) => {
+        this.props.socket.on("lobbyUpdate", ({ error, users }) => {         //Called when all users finish race
             this.setState({ending:true})
             
         })
@@ -72,7 +65,8 @@ class Racing extends Component {
     componentWillReceiveProps(props) {
         console.log("Updating Information...")
     }
-    onUserInputChange = (e) => {
+
+    onUserInputChange = (e) => {                                //Called whenever user types, set timer and check if complete
         const inputText = e.target.value;
         let tempInput = this.state.totalUserInput + inputText
         this.checkIfComplete(tempInput)
@@ -80,20 +74,19 @@ class Racing extends Component {
         this.setState({ curUserInput: inputText, tempUserInput: this.state.totalUserInput + inputText, characters: this.countCorrectCharacters(tempInput) })
     }
 
-    countCorrectCharacters(tempInput) {
+    countCorrectCharacters(tempInput) {                         //Count correct number of characters as user types
         const text = this.props.prompt.textString;
-        let correctChars = tempInput.split('').filter((s, i) => s === text[i]).length;
-        if (((correctChars / this.props.prompt.textArrLength) * 100) >= this.state.floorPercentage) {
-            this.setState({ floorPercentage: Math.floor((correctChars / this.props.prompt.textArrLength) * 100) },
+        let correctChars = tempInput.split('').filter((s, i) => s === text[i]).length;      //Number of correct input compared to full prompt
+        if (((correctChars / this.props.prompt.textArrLength) * 100) >= this.state.floorPercentage) {               //Compare if new percentage is greater than the current percentage
+            this.setState({ floorPercentage: Math.floor((correctChars / this.props.prompt.textArrLength) * 100) },  //Set new percentage
                 (() => {
                     if (this.state.floorPercentage === 100) {
-                        this.props.socket.emit('letterTyped', { lobbyCode: this.props.lobbyInfo, percentage: this.state.floorPercentage, wpm: this.state.wpm })
+                        this.props.socket.emit('letterTyped', { lobbyCode: this.props.lobbyInfo, percentage: this.state.floorPercentage, wpm: this.state.wpm }) //Sends new percentage through socket
                     }
                 }
                 )
             )
         };
-        this.setState({ percentage: correctChars / this.props.prompt.textArrLength });
         return correctChars;
     };
 
