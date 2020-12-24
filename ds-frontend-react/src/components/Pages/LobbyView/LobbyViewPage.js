@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import UsersTable from './LobbyUsersTable'
 import './LobbyViewPage.css';
 import Button from '@material-ui/core/Button';
-import { green } from '@material-ui/core/colors';
 
 
 class Lobby extends Component {

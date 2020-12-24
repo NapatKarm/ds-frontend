@@ -34,7 +34,7 @@ const userChange = () => {
 export const userCreationThunk = (userinfo) => async (dispatch) => {
     let res;
     try {
-        res = await axios.post(`http://104.198.232.73:8000/addUser`, {
+        res = await axios.post(`http://35.239.70.1:8000/addUser`, {
             Username: userinfo,
         })
         dispatch(userCreation(userinfo));
@@ -46,7 +46,7 @@ export const userCreationThunk = (userinfo) => async (dispatch) => {
 
 export const userChangeThunk = (username) => async (dispatch) => {
     try {
-        await axios.delete(`http://104.198.232.73:8000/deleteUser`, { data: { Username: username } });
+        await axios.delete(`http://35.239.70.1:8000/deleteUser`, { data: { Username: username } });
         dispatch(userChange());
     }
     catch (fetchError) {
